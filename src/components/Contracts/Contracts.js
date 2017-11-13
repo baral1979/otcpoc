@@ -50,7 +50,20 @@ class Contracts extends React.Component {
       return <NewContract onCreate={props.onCreate} />;
     }
 
+
+
+    // {this.props.contracts.map((item, i) =>
+    //   <div className={s.contractContainer} key={i}>
+    //     <span
+    //       onClick={this.selectContract.bind(this, item)}
+    //       className={`label label-default ${s.contractAddress}`}
+    //     >
+    //       <span className="badge">{i}</span> {item}
+    //     </span>
+    //   </div>,
+    // )}
     return (
+      <div>
       <div className="panel panel-default">
         <div className="panel-heading">
           <h4>
@@ -65,22 +78,34 @@ class Contracts extends React.Component {
         <div className="panel-body">
           <div className="row">
             <div className="col-md-5">
-              {this.props.contracts.map((item, i) =>
-                <div className={s.contractContainer} key={i}>
-                  <span
-                    onClick={this.selectContract.bind(this, item)}
-                    className={`label label-default ${s.contractAddress}`}
-                  >
-                    <span className="badge">{i}</span> {item}
-                  </span>
-                </div>,
-              )}
+            <table className="table">
+            <tbody>
+
+            {this.props.contracts.map((item, i) =>
+              <tr key={i}>
+              <td>
+              {i+1}
+              </td>
+              <td>
+              <span
+                onClick={this.selectContract.bind(this, item)}
+              className={s.contractAddress}>
+                {item}
+              </span>
+              </td>
+              </tr>,
+            )}
+
+
+              </tbody>
+              </table>
             </div>
             <div className="col-md-7">
               <SelectedContract contract={this.state.selectedContract} />
             </div>
           </div>
         </div>
+      </div>
       </div>
     );
   }

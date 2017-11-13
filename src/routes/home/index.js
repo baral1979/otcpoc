@@ -9,7 +9,6 @@
 
 import React from 'react';
 import Home from './Home2';
-import Layout from '../../components/Layout';
 
 // async function action({ fetch }) {
 //   const resp = await fetch('/graphql', {
@@ -39,9 +38,7 @@ function action() {
     chunks: ['home'],
     title: 'OTC Contracts',
     component: (
-      <Layout>
-        <Home accounts={acc}/>
-      </Layout>
+      <Home/>
     ),
   };
 }

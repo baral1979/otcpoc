@@ -1,31 +1,82 @@
-/**
- *
- * Copyright © 2017-present OTC Contracts All rights reserved.
- *
- */
-
 import React from 'react';
-import PropTypes from 'prop-types';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Contracts.css';
+import ethConnect from '../../helpers/eth';
+import OTC from '../../helpers/otc';
 
-class Contracts extends React.Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-  };
+import Loadable from 'react-loading-overlay';
+import Contracts from '../../components/Contracts';
+
+class ContractsCompoment extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      loadingMessage: 'Connecting to Ethereum Blockchain',
+      loading: true,
+      inputAddress: {
+        address: '',
+        balance: 0,
+      },
+
+      contracts: [],
+
+      selectedContract: undefined,
+
+      mascara_enabled: false,
+    };
+
+    this.ethClient = undefined;
+  }
+
+  // componentDidMount componentDidMount componentDidMount
+  componentDidMount() {
+    const self = this;
+
+    try {
+      this.ethClient = new ethConnect();
+    } catch (e) {
+      alert('Incompatible browser');
+      return; // TODO Handle error
+    } finally {
+    }
+
+    this.ethClient
+      .getContracts(OTC.spawnContract.abi, OTC.spawnContract.address)
+      .then(contracts => {
+        self.setState({
+          contracts: contracts[0],
+        });
+        console.log('contracts', contracts[0]);
+      })
+      .catch(err => {
+        console.log('contract error', err);
+      });
+
+    self.setState({
+      loading: false,
+    });
+  }
 
   render() {
     return (
       <div className={s.root}>
         <div className={s.container}>
-          <h1>
-            {this.props.title}
-          </h1>
-          <p>...</p>
+          <br />
+
+          <Loadable
+            active={this.state.loading}
+            spinner
+            text={`${this.state.loadingMessage}...`}
+          >
+            <Contracts contracts={this.state.contracts} />
+
+            <br />
+          </Loadable>
         </div>
       </div>
     );
   }
 }
 
-export default withStyles(s)(Contracts);
+export default withStyles(s)(ContractsCompoment);

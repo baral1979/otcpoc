@@ -71,7 +71,7 @@ class Home2 extends React.Component {
           >
             <Contracts contracts={this.state.contracts} />
 
-            <br />
+          
           </Loadable>
         </div>
       </div>
