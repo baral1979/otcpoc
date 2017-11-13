@@ -1,0 +1,6 @@
+{
+  "name": "Trx",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./Trx.js"
+}

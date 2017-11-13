@@ -1,0 +1,26 @@
+.contractContainer {
+  padding: 3px;
+}
+
+.contractAddress {
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 1em !important;
+  margin-bottom: 10px;
+  background-color: #814973;
+  color: #c9c9c9;
+}
+
+.contractAddress:hover {
+  background-color: #3c244a;
+  color: #daa;
+}
+
+.noContractWrapper {
+  display: block;
+  margin: auto;
+  color: #c9c9c9;
+  line-height: 10em;
+  font-size: 3em;
+  text-align: center;
+}
