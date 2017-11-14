@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Alert } from 'react-bootstrap';
 import NewContract from './NewContract';
 import ContractData from './ContractData';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -29,11 +29,20 @@ class Contracts extends React.Component {
   }
 
   componentDidMount() {
+    this.setState({
+      displayedContracts: this.state.contracts
+    });
+
     this.ethClient = new ethConnect();
   }
 
   newContract(trx) {
-    this.setState({ pendingTrx: trx });
+    if (trx)
+       this.setState({ pendingTrx: trx });
+  }
+
+  handleDismiss() {
+    this.setState({ pendingTrx: undefined });
   }
 
   render() {
@@ -50,27 +59,27 @@ class Contracts extends React.Component {
       return <NewContract onCreate={props.onCreate} />;
     }
 
+    function Transaction(props) {
+      if (props.pendingTrx) {
+      return (
+          <Alert bsStyle="success" onDismiss={props.handleDismiss}>
+           <h4>Great! The contract was create successfully!</h4>
+           <p>The transaction is currently pending and waiting for confirmations... <a target="_blank" href={`https://ropsten.etherscan.io/tx/${props.pendingTrx}`}>Click here to see more details about the transaction.</a></p>
+          </Alert>)
+      }
 
+      return null;
+    }
 
-    // {this.props.contracts.map((item, i) =>
-    //   <div className={s.contractContainer} key={i}>
-    //     <span
-    //       onClick={this.selectContract.bind(this, item)}
-    //       className={`label label-default ${s.contractAddress}`}
-    //     >
-    //       <span className="badge">{i}</span> {item}
-    //     </span>
-    //   </div>,
-    // )}
     return (
       <div>
+      <Transaction pendingTrx={this.state.pendingTrx} handleDismiss={this.handleDismiss.bind(this)}/>
       <div className="panel panel-default">
         <div className="panel-heading">
           <h4>
             Spawn Contracts<div className="pull-right">
-              <NewContractWrapper
+              <NewContract
                 onCreate={this.newContract.bind(this)}
-                pendingTrx={this.state.pendingTrx}
               />
             </div>
           </h4>{' '}
@@ -79,11 +88,17 @@ class Contracts extends React.Component {
           <div className="row">
             <div className="col-md-5">
             <table className="table">
+              <thead>
+               <tr>
+                 <th>#</th>
+                 <th>Contract Address</th>
+               </tr>
+             </thead>
             <tbody>
 
             {this.props.contracts.map((item, i) =>
               <tr key={i}>
-              <td>
+              <td className={s.numCol}>
               {i+1}
               </td>
               <td>
@@ -95,8 +110,6 @@ class Contracts extends React.Component {
               </td>
               </tr>,
             )}
-
-
               </tbody>
               </table>
             </div>

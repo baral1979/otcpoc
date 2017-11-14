@@ -4,8 +4,9 @@ import s from './Home2.css';
 import ethConnect from '../../helpers/eth';
 import OTC from '../../helpers/otc';
 
-import Loadable from 'react-loading-overlay';
+import Loader from '../../components/Loader';
 import Contracts from '../../components/Contracts';
+import Error from '../../components/Error';
 
 class Home2 extends React.Component {
   constructor(props) {
@@ -18,7 +19,7 @@ class Home2 extends React.Component {
         address: '',
         balance: 0,
       },
-
+      state: 1,
       contracts: [],
 
       selectedContract: undefined,
@@ -29,53 +30,80 @@ class Home2 extends React.Component {
     this.ethClient = undefined;
   }
 
-  // componentDidMount componentDidMount componentDidMount
-  componentDidMount() {
+  init() {
     const self = this;
-
     try {
       this.ethClient = new ethConnect();
     } catch (e) {
-      alert('Incompatible browser');
-      return; // TODO Handle error
-    } finally {
+      self.setState({state: 2});
+      return;
     }
 
-    this.ethClient
-      .getContracts(OTC.spawnContract.abi, OTC.spawnContract.address)
-      .then(contracts => {
-        self.setState({
-          contracts: contracts[0],
-        });
-        console.log('contracts', contracts[0]);
-      })
-      .catch(err => {
-        console.log('contract error', err);
-      });
-
-    self.setState({
-      loading: false,
+    this.ethClient.getContracts(OTC.spawnContract.abi, OTC.spawnContract.address).then(contracts => {
+      self.setState({contracts: contracts[0]});
+      console.log('contracts', contracts[0].reverse());
+    }).catch(err => {
+      console.log('contract error', err);
     });
+
+    self.setState({loading: false, state: 3});
   }
 
+  // componentDidMount componentDidMount componentDidMount
+  componentDidMount() {
+    const self = this;
+    setTimeout(function() { self.init();}, 3000);
+    return;
+    //
+    //
+    // try {
+    //   this.ethClient = new ethConnect();
+    // } catch (e) {
+    //
+    //   return; // TODO Handle error
+    // } finally {
+    // }
+    //
+    // this.ethClient
+    //   .getContracts(OTC.spawnContract.abi, OTC.spawnContract.address)
+    //   .then(contracts => {
+    //     self.setState({
+    //       contracts: contracts[0],
+    //     });
+    //     console.log('contracts', contracts[0]);
+    //   })
+    //   .catch(err => {
+    //     console.log('contract error', err);
+    //   });
+    //
+    // self.setState({
+    //   loading: false,
+    // });
+  }
+
+
+
   render() {
-    return (
-      <div className={s.root}>
-        <div className={s.container}>
-          <br />
+    if (this.state.state === 1)
+      return <Loader/>
 
-          <Loadable
-            active={this.state.loading}
-            spinner
-            text={`${this.state.loadingMessage}...`}
-          >
-            <Contracts contracts={this.state.contracts} />
+    if (this.state.state === 2)
+      return <Error/>
 
-          
-          </Loadable>
-        </div>
-      </div>
-    );
+        return (
+          <div className={s.root}>
+            <div className={s.container}>
+              <br />
+
+
+                <Contracts contracts={this.state.contracts} />
+
+
+            </div>
+          </div>
+        );
+
+
   }
 }
 

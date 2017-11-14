@@ -12,6 +12,7 @@ import Address from '../Address';
 import ethConnect from '../../helpers/eth';
 import OTC from '../../helpers/otc';
 
+
 class NewContract extends React.Component {
   constructor(props) {
     super(props);
@@ -58,7 +59,9 @@ class NewContract extends React.Component {
 
   create() {
     const self = this;
-
+    //self.props.onCreate('ASDFASFD');
+    //self.close();
+    //return;
     const contract = this.ethClient.getContract(
       OTC.spawnContract.abi,
       OTC.spawnContract.address,
@@ -100,7 +103,7 @@ class NewContract extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <h5>Input Address</h5>
-            {this.state.inputAddress}
+            {this.state.inputAddress} <span className="label label-info">{this.state.inputAddress === "" ? "Loading from Metamask..." : "" }</span>
 
             <h5>Rent (in Finney)</h5>
             <FormControl

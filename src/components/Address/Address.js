@@ -56,7 +56,7 @@ class Address extends React.Component {
             href={`https://ropsten.etherscan.io/address/${this.state.address}`}
           >
             {this.state.address}
-          </a>
+          </a>&nbsp;
           <Balance />
         </span>
       </div>

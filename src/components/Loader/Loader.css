@@ -106,7 +106,7 @@ body {
   height: 2px;
   margin: 28px auto;
   border-radius: 2px;
-  background-color: #FF92E0;
+  background-color: #B600FF;
   position: relative;
   overflow: hidden;
   z-index: 1;
@@ -120,7 +120,7 @@ body {
   -webkit-transform: translate(-34px, 0);
   -ms-transform: translate(-34px, 0);
   transform: translate(-34px, 0);
-  background-color: #2B2845;
+  background-color: #FF92E0;
   border-radius: 2px;
   -webkit-animation: initial-loading 1.5s infinite ease;
   animation: animation 1.4s infinite ease;
@@ -291,10 +291,10 @@ body {
     color: #f3f3f3;
   }
   25% {
-    color: #FF92E0;
+    color: #B600FF;
   }
   50% {
-    color: #FF92E0;
+    color: #B600FF;
   }
   75% {
     color: #f3f3f3;
@@ -309,10 +309,10 @@ body {
     color: #f3f3f3;
   }
   25% {
-    color: #FF92E0;
+    color: #B600FF;
   }
   50% {
-    color: #FF92E0;
+    color: #B600FF;
   }
   75% {
     color: #f3f3f3;

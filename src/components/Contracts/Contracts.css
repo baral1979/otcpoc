@@ -1,18 +1,16 @@
 .contractContainer {
-  padding: 3px;
+
 }
 
 .contractAddress {
-
   cursor: pointer;
-  font-family: monospace;
   font-size: 1em !important;
-  margin-bottom: 10px;
   display: inline-block;
-      vertical-align: bottom;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      width: 40px;
+  vertical-align: bottom;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 300px;
+  color: blue;
 }
 
 .noContractWrapper {
