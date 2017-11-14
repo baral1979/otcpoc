@@ -41,7 +41,6 @@ class Home2 extends React.Component {
 
     this.ethClient.getContracts(OTC.spawnContract.abi, OTC.spawnContract.address).then(contracts => {
       self.setState({contracts: contracts[0]});
-      console.log('contracts', contracts[0].reverse());
     }).catch(err => {
       console.log('contract error', err);
     });
@@ -52,36 +51,9 @@ class Home2 extends React.Component {
   // componentDidMount componentDidMount componentDidMount
   componentDidMount() {
     const self = this;
-    setTimeout(function() { self.init();}, 3000);
+    setTimeout(function() { self.init();}, 2500);
     return;
-    //
-    //
-    // try {
-    //   this.ethClient = new ethConnect();
-    // } catch (e) {
-    //
-    //   return; // TODO Handle error
-    // } finally {
-    // }
-    //
-    // this.ethClient
-    //   .getContracts(OTC.spawnContract.abi, OTC.spawnContract.address)
-    //   .then(contracts => {
-    //     self.setState({
-    //       contracts: contracts[0],
-    //     });
-    //     console.log('contracts', contracts[0]);
-    //   })
-    //   .catch(err => {
-    //     console.log('contract error', err);
-    //   });
-    //
-    // self.setState({
-    //   loading: false,
-    // });
   }
-
-
 
   render() {
     if (this.state.state === 1)

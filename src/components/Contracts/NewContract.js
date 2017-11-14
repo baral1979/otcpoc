@@ -21,6 +21,7 @@ class NewContract extends React.Component {
       showModel: false,
       inputAddress: '',
       readOnly: '',
+      errorCount: 0
     };
 
     this.ethClient = undefined;
@@ -29,7 +30,17 @@ class NewContract extends React.Component {
   updateAccount() {
     const self = this;
     this.ethClient.getAccounts().then(accounts => {
-      self.setState({ inputAddress: accounts[0] });
+      console.log('accounts', accounts);
+      if (!accounts || accounts.length === 0) {
+        self.setState({inputAddress: "", errorCount: (self.state.errorCount+1)});
+
+        return;
+      }
+      self.setState({
+        inputAddress: accounts[0]
+      });
+    }).catch(err => {
+      console.log('err', err)
     });
   }
 
@@ -46,6 +57,7 @@ class NewContract extends React.Component {
   }
 
   close() {
+    clearInterval(this.interval);
     this.setState({ showModal: false });
   }
 
@@ -91,6 +103,17 @@ class NewContract extends React.Component {
   render() {
     const readonly = true;
 
+    function AddressStatus(props) {
+      if (props.inputAddress != '')
+         return null;
+
+      if (props.errorCount >=1) {
+          return (<span className="label label-danger">Having trouble loading address... Make sure your are logged in Metamask!</span>);
+      }
+
+      return (<span className="label label-info">Loading input address from Metamask..</span>);
+    }
+
     return (
       <div>
         <Button bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
@@ -103,7 +126,7 @@ class NewContract extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <h5>Input Address</h5>
-            {this.state.inputAddress} <span className="label label-info">{this.state.inputAddress === "" ? "Loading from Metamask..." : "" }</span>
+            {this.state.inputAddress} <AddressStatus inputAddress={this.state.inputAddress} errorCount={this.state.errorCount}/>
 
             <h5>Rent (in Finney)</h5>
             <FormControl

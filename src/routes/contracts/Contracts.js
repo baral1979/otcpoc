@@ -47,7 +47,6 @@ class ContractsCompoment extends React.Component {
         self.setState({
           contracts: contracts[0],
         });
-        console.log('contracts', contracts[0]);
       })
       .catch(err => {
         console.log('contract error', err);

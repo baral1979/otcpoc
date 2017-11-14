@@ -72,16 +72,11 @@ function ethConnect() {
   };
 
   const getContractTicket = function(abi, at) {
-    console.log('abi', abi);
-    console.log('at', at);
     return new Promise((resolve, reject) => {
-      console.log('ASDF');
       const contract = ethContract(abi).at(at);
-      console.log('contract', contract);
       contract
         .getTicket()
         .then(data => {
-          console.log('got data');
           resolve({
             address: at,
             value: data[0].toString(),

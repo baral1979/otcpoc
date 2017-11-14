@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, OverlayTrigger, Alert } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Alert, Pagination } from 'react-bootstrap';
 import NewContract from './NewContract';
 import ContractData from './ContractData';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -15,24 +15,24 @@ class Contracts extends React.Component {
 
     this.state = {
       contracts: props.contracts,
-      selectedContract: undefined,
       pendingTrx: undefined,
+      activePage: 1,
+      itemsPerPage: 12
     };
 
     this.ethClient = undefined;
+    this.getContracts = this.getContracts.bind(this);
   }
 
-  selectContract(contract) {
+  selectContract(event) {
+    var contract = event;
+
     this.ethClient
       .getContractTicket(OTC.epayContract.abi, contract)
       .then(data => this.setState({ selectedContract: data }));
   }
 
   componentDidMount() {
-    this.setState({
-      displayedContracts: this.state.contracts
-    });
-
     this.ethClient = new ethConnect();
   }
 
@@ -43,6 +43,14 @@ class Contracts extends React.Component {
 
   handleDismiss() {
     this.setState({ pendingTrx: undefined });
+  }
+
+  getContracts() {
+    return this.state.contracts;
+  }
+
+  changePage(page) {
+    this.setState({ activePage: page});
   }
 
   render() {
@@ -63,12 +71,54 @@ class Contracts extends React.Component {
       if (props.pendingTrx) {
       return (
           <Alert bsStyle="success" onDismiss={props.handleDismiss}>
-           <h4>Great! The contract was create successfully!</h4>
-           <p>The transaction is currently pending and waiting for confirmations... <a target="_blank" href={`https://ropsten.etherscan.io/tx/${props.pendingTrx}`}>Click here to see more details about the transaction.</a></p>
+            <h4>Great! The contract was create successfully!</h4>
+            <p>The transaction is currently pending and waiting for confirmations... <a target="_blank" href={`https://ropsten.etherscan.io/tx/${props.pendingTrx}`}>Click here to see more details about the transaction.</a></p>
           </Alert>)
       }
 
       return null;
+    }
+
+    function ContractList(props) {
+
+      if (!props || !props.contracts ||props.contracts.length === 0)
+          return null;
+
+      var firstItemIndex = props.itemsPerPage * (props.activePage-1);
+      var items = props.contracts.slice(firstItemIndex, firstItemIndex + props.itemsPerPage);
+
+      return (
+        <tbody>
+        {items.map((item, i) =>
+          <tr key={i}>
+          <td className={s.numCol}>
+            {i+1}
+          </td>
+          <td>
+          <span
+              onClick={props.handleClick.bind(this, item)}
+              className={s.contractAddress}>
+            {item}
+          </span>
+          </td>
+          </tr>
+        )}
+          </tbody>
+      )
+
+
+    }
+
+    function Pager(props) {
+      if (props.nbItems <= 0)
+        return null;
+
+      return (  <Pagination
+        bsSize="medium"
+        items={Math.ceil(props.nbItems / props.itemsPerPage)}
+        activePage={props.activePage}
+        onSelect={props.handleSelect}
+        />)
     }
 
     return (
@@ -94,24 +144,9 @@ class Contracts extends React.Component {
                  <th>Contract Address</th>
                </tr>
              </thead>
-            <tbody>
-
-            {this.props.contracts.map((item, i) =>
-              <tr key={i}>
-              <td className={s.numCol}>
-              {i+1}
-              </td>
-              <td>
-              <span
-                onClick={this.selectContract.bind(this, item)}
-              className={s.contractAddress}>
-                {item}
-              </span>
-              </td>
-              </tr>,
-            )}
-              </tbody>
+                <ContractList contracts={this.props.contracts} activePage={this.state.activePage} itemsPerPage={this.state.itemsPerPage} handleClick={this.selectContract.bind(this)}/>
               </table>
+              <Pager nbItems={this.props.contracts.length} handleSelect={this.changePage.bind(this)} activePage={this.state.activePage} itemsPerPage={this.state.itemsPerPage}/>
             </div>
             <div className="col-md-7">
               <SelectedContract contract={this.state.selectedContract} />
