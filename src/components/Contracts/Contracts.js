@@ -45,6 +45,10 @@ class Contracts extends React.Component {
     this.setState({ pendingTrx: undefined });
   }
 
+  handleChangeRent(contract) {
+    alert(`Change rent for ${contract.address}`);
+  }
+
   getContracts() {
     return this.state.contracts;
   }
@@ -56,7 +60,7 @@ class Contracts extends React.Component {
   render() {
     function SelectedContract(props) {
       if (props && props.contract) {
-        return <ContractData contract={props.contract} />;
+        return <ContractData changeRent={props.changeRent} contract={props.contract} />;
       }
       return <div className={s.noContractWrapper}>Select a contract</div>;
     }
@@ -79,6 +83,8 @@ class Contracts extends React.Component {
       return null;
     }
 
+
+
     function ContractList(props) {
 
       if (!props || !props.contracts ||props.contracts.length === 0)
@@ -92,7 +98,7 @@ class Contracts extends React.Component {
         {items.map((item, i) =>
           <tr key={i}>
           <td className={s.numCol}>
-            {i+1}
+            {i+1+firstItemIndex}
           </td>
           <td>
           <span
@@ -149,7 +155,7 @@ class Contracts extends React.Component {
               <Pager nbItems={this.props.contracts.length} handleSelect={this.changePage.bind(this)} activePage={this.state.activePage} itemsPerPage={this.state.itemsPerPage}/>
             </div>
             <div className="col-md-7">
-              <SelectedContract contract={this.state.selectedContract} />
+              <SelectedContract changeRent={this.handleChangeRent.bind(this)} contract={this.state.selectedContract} />
             </div>
           </div>
         </div>

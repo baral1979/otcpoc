@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
 import Address from '../Address';
 import Amount from '../Eth';
 
 class Contracts extends React.Component {
   constructor(props) {
     super(props);
-    console.log('props', props);
   }
 
   render() {
@@ -50,7 +49,7 @@ class Contracts extends React.Component {
               <tr>
                 <td>Rent</td>
                 <td>
-                  <Amount format="Finney" wei={this.props.contract.rent} />
+                  <Amount format="Finney" wei={this.props.contract.rent} /> <Button bsStyle="link" color="red" onClick={this.props.changeRent.bind(this, this.props.contract)} bsSize="small">Change Rent</Button>
                 </td>
               </tr>
               <tr>
