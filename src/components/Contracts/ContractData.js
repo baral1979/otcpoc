@@ -49,7 +49,7 @@ class Contracts extends React.Component {
               <tr>
                 <td>Rent</td>
                 <td>
-                  <Amount format="Finney" wei={this.props.contract.rent} /> <Button bsStyle="link" color="red" onClick={this.props.changeRent.bind(this, this.props.contract)} bsSize="small">Change Rent</Button>
+                  <Amount format="Finney" wei={this.props.contract.rent} /> 
                 </td>
               </tr>
               <tr>
