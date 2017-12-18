@@ -54,6 +54,10 @@ class Html extends React.Component {
             rel="stylesheet"
             href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css"
           />
+          <link
+            rel="stylesheet"
+            href="/site.css"
+          />
           {styles.map(style =>
             <style
               key={style.id}

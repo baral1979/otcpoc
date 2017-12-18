@@ -3,6 +3,11 @@ import PropTypes from 'prop-types';
 import { Tooltip, OverlayTrigger, Button } from 'react-bootstrap';
 import Address from '../Address';
 import Amount from '../Eth';
+import ClaimBalance from './ClaimBalance';
+import SetRent from './SetRent';
+import LeaseContract from './LeaseContract';
+import DefineSettlement from './DefineSettlement';
+
 
 class Contracts extends React.Component {
   constructor(props) {
@@ -18,7 +23,7 @@ class Contracts extends React.Component {
           </h5>
         </div>
         <div className="panel-body">
-          <h5>Variables</h5>
+          <h5>Contract Variables</h5>
           <table className="table">
             <thead />
             <tbody>
@@ -29,27 +34,9 @@ class Contracts extends React.Component {
                 </td>
               </tr>
               <tr>
-                <td>ValueT</td>
-                <td>
-                  <Amount format="Finney" wei={this.props.contract.valueT} />
-                </td>
-              </tr>
-              <tr>
-                <td>Units</td>
-                <td>
-                  <Amount format="Finney" wei={this.props.contract.units} />
-                </td>
-              </tr>
-              <tr>
-                <td>UnitsT</td>
-                <td>
-                  <Amount format="Finney" wei={this.props.contract.unitsT} />
-                </td>
-              </tr>
-              <tr>
                 <td>Rent</td>
                 <td>
-                  <Amount format="Finney" wei={this.props.contract.rent} /> 
+                  <Amount format="Finney" wei={this.props.contract.rent} />
                 </td>
               </tr>
               <tr>
@@ -58,10 +45,16 @@ class Contracts extends React.Component {
                   {this.props.contract.contractState}
                 </td>
               </tr>
+              <tr>
+                <td>Description</td>
+                <td>
+                  {this.props.contract.contractState}
+                </td>
+              </tr>
             </tbody>
           </table>
 
-          <h5>Parties</h5>
+          <h5>Current Variables</h5>
           <table className="table">
             <tbody>
               <tr>
@@ -84,6 +77,12 @@ class Contracts extends React.Component {
               </tr>
             </tbody>
           </table>
+          <div>
+          <ClaimBalance onCreate={this.props.onCreate} />
+          <SetRent onCreate={this.props.onCreate} />
+          <LeaseContract onCreate={this.props.onCreate} rent={this.props.contract.rent}/>
+          <DefineSettlement onCreate={this.props.onCreate} sellerAddress={this.props.contract.seller}/>
+          </div>
         </div>
       </div>
     );
