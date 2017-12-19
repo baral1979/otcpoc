@@ -6,23 +6,20 @@
     "node": ">=6.5",
     "npm": ">=3.10"
   },
-  "browserslist": [
-    ">1%",
-    "last 4 versions",
-    "Firefox ESR",
-    "not ie < 9"
-  ],
+  "browserslist": [">1%", "last 4 versions", "Firefox ESR", "not ie < 9"],
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "bluebird": "^3.5.0",
     "bn.js": "^4.11.8",
     "body-parser": "^1.17.2",
     "classnames": "^2.2.5",
+    "convert-string": "^0.1.0",
     "cookie-parser": "^1.4.3",
     "core-js": "^2.4.1",
     "eth-query": "^2.1.2",
     "etherscan-api": "^3.0.11",
     "ethjs-contract": "^0.1.9",
+    "ethjs-format": "^0.2.4",
     "ethjs-query": "^0.3.1",
     "express": "^4.15.3",
     "express-graphql": "^0.6.6",
@@ -40,8 +37,9 @@
     "pretty-error": "^2.1.1",
     "prop-types": "^15.5.10",
     "query-string": "^5.0.0",
-    "react": "^15.5.4",
+    "react": "^15.6.2",
     "react-bootstrap": "^0.31.5",
+    "react-copy-to-clipboard": "^5.0.1",
     "react-dom": "^15.5.4",
     "react-load-script": "0.0.6",
     "react-loading": "^1.0.1",
@@ -153,9 +151,7 @@
     ],
     "env": {
       "test": {
-        "plugins": [
-          "rewire"
-        ]
+        "plugins": ["rewire"]
       }
     },
     "ignore": [
@@ -167,18 +163,9 @@
     ]
   },
   "lint-staged": {
-    "*.{js,jsx}": [
-      "eslint --fix",
-      "git add"
-    ],
-    "*.{json,graphql}": [
-      "prettier --write",
-      "git add"
-    ],
-    "*.{css,less,scss,sss}": [
-      "stylelint --fix",
-      "git add"
-    ]
+    "*.{js,jsx}": ["eslint --fix", "git add"],
+    "*.{json,graphql}": ["prettier --write", "git add"],
+    "*.{css,less,scss,sss}": ["stylelint --fix", "git add"]
   },
   "scripts": {
     "precommit": "lint-staged",

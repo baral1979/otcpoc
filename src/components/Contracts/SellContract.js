@@ -13,7 +13,7 @@ import ethConnect from '../../helpers/eth';
 import OTC from '../../helpers/otc';
 
 
-class SetRent extends React.Component {
+class SellContract extends React.Component {
   constructor(props) {
     super(props);
     this.interval = null;
@@ -120,7 +120,7 @@ class SetRent extends React.Component {
     return (
       <div className="yoyo">
         <Button disabled bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
-          Set Rent
+          Sell
         </Button>
 
         <Modal show={this.state.showModal} onHide={this.close.bind(this)}>
@@ -150,4 +150,4 @@ class SetRent extends React.Component {
   }
 }
 
-export default SetRent;
+export default SellContract;

@@ -30,7 +30,7 @@ class NewContract extends React.Component {
   updateAccount() {
     const self = this;
     this.ethClient.getAccounts().then(accounts => {
-      console.log('accounts', accounts);
+
       if (!accounts || accounts.length === 0) {
         self.setState({inputAddress: "", errorCount: (self.state.errorCount+1)});
 
@@ -45,15 +45,11 @@ class NewContract extends React.Component {
   }
 
   componentDidMount() {
-    const self = this;
-    this.ethClient = new ethConnect();
-    this.interval = setInterval(() => {
-      self.updateAccount();
-    }, 4000);
+
   }
 
   componentWillUnmount() {
-    clearInterval(this.interval);
+
   }
 
   close() {
@@ -62,6 +58,11 @@ class NewContract extends React.Component {
   }
 
   open() {
+    const self = this;
+    this.ethClient = new ethConnect();
+    this.interval = setInterval(() => {
+      self.updateAccount();
+    }, 4000);
     this.setState({ showModal: true });
   }
 
@@ -71,9 +72,7 @@ class NewContract extends React.Component {
 
   create() {
     const self = this;
-    //self.props.onCreate('ASDFASFD');
-    //self.close();
-    //return;
+
     const contract = this.ethClient.getContract(
       OTC.spawnContract.abi,
       OTC.spawnContract.address,
@@ -83,6 +82,7 @@ class NewContract extends React.Component {
       const promise = contract.createContract(
         parseInt(this.state.rent) * 1000000000000000,
         this.state.inputAddress,
+        web3.fromAscii("undefined"),
         {
           from: this.state.inputAddress,
           gas: 2000000,

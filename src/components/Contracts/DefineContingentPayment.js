@@ -17,13 +17,14 @@ import InputEther from './InputEther';
 import MetaMaskAddress from './MetaMaskAddress';
 
 
-class DefineSettlement extends React.Component {
+class ContingentPayment extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showModel: false,
-      settlement: '',
-      fee: 0,
+      settlerAddress: '',
+      bid: 0,
+      contract: 0,
     };
 
     this.ethClient = undefined;
@@ -46,12 +47,16 @@ class DefineSettlement extends React.Component {
     this.setState({ showModal: true });
   }
 
-  setSettlement(e) {
-    this.setState({ settlement: e.target.value });
+  setBid(value) {
+    this.setState({ bid: value });
   }
 
-  setFee(value) {
-    this.setState({ fee: value });
+  setContract(value) {
+    this.setState({ contract: value });
+  }
+
+  setSettlerAddress(e) {
+    this.setState({ settlerAddress: e.target.value });
   }
 
   handleMetaMaskAddress(address) {
@@ -66,12 +71,13 @@ class DefineSettlement extends React.Component {
 
     const contract = this.ethClient.getContract(
       OTC.epayContract.abi,
-      OTC.epayContract.address
+      self.props.contract.address
     );
 
     if (contract) {
-      const promise = contract.defineSettlement(10000000,  web3.fromAscii(this.state.settlement) ,{
+      const promise = contract.confirmOffer(this.state.settlement, this.state.contract, {
         from: this.state.sellerAddress,
+        value: this.state.bid,
         gasLimit: 90000,
         gasPrice: 90000
       });
@@ -81,20 +87,23 @@ class DefineSettlement extends React.Component {
           self.props.onCreate(response);
           self.close();
         })
-        .catch(err => console.log('error', err));
+        .catch(err => {
+          self.props.onError(err);
+          self.close();
+        });
     }
-    // console.log(contract);
   }
 
   render() {
-    if (this.props.show !== true)
-      return null;
+    if (this.props.contract.contractState != '2')
+       return null;
+
     const readonly = true;
 
     return (
       <div className="yoyo">
         <Button  bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
-          Define Settlement
+          Define Contingent Payment
         </Button>
 
         <Modal show={this.state.showModal} onHide={this.close.bind(this)}>
@@ -102,21 +111,26 @@ class DefineSettlement extends React.Component {
             <Modal.Title>Define Settlement</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <h5>Seller Address</h5>
-            <MetaMaskAddress onAddress={this.handleMetaMaskAddress.bind(this)} />
-              <h5>Fee (in Finney)</h5>
-              <InputEther valueChange={this.setFee.bind(this)}/>
-            <h5>Settlement</h5>
+            <h5>Settler Address</h5>
             <FormControl
               type="string"
-              onChange={this.setSettlement.bind(this)}
-              placeholder="Settlement"
-              value={this.state.settlement}
+              onChange={this.setSettlerAddress.bind(this)}
+              placeholder="Settler Address"
             />
+
+            <h5>Seller Address</h5>
+            <MetaMaskAddress onAddress={this.handleMetaMaskAddress.bind(this)} />
+
+              <h5>Contract (in Finney)</h5>
+              <InputEther valueChange={this.setContract.bind(this)}/>
+
+              <h5>Bid (in Finney)</h5>
+              <InputEther valueChange={this.setBid.bind(this)}/>
+
           </Modal.Body>
           <Modal.Footer>
             <Button disabled={!this.state.sellerAddress} className="btn-success" onClick={this.create.bind(this)}>
-              Define Settlement
+              Define Contingent Payment
             </Button>
             <Button onClick={this.close.bind(this)}>Close</Button>
           </Modal.Footer>
@@ -126,4 +140,4 @@ class DefineSettlement extends React.Component {
   }
 }
 
-export default withStyles(s)(DefineSettlement);
+export default withStyles(s)(ContingentPayment);

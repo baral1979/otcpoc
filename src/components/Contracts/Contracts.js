@@ -26,10 +26,10 @@ class Contracts extends React.Component {
 
   selectContract(event) {
     var contract = event;
-
+    console.log(event);
     this.ethClient
       .getContractTicket(OTC.epayContract.abi, contract)
-      .then(data => this.setState({ selectedContract: data }));
+      .then(data => {console.log('selected contract',data);this.setState({ selectedContract: data })});
   }
 
   componentDidMount() {
@@ -42,7 +42,7 @@ class Contracts extends React.Component {
   }
 
   handleDismiss() {
-    this.setState({ pendingTrx: undefined });
+    this.setState({ pendingTrx: undefined, error: undefined });
   }
 
   handleChangeRent(contract) {
@@ -53,6 +53,17 @@ class Contracts extends React.Component {
     return this.state.contracts;
   }
 
+  handleOnLeased(trx) {
+    if (trx)
+       this.setState({ pendingTrx: trx });
+  }
+
+  handleOnError(err) {
+    this.setState({
+      error: 'An error has occured. Check console for more details!'
+    })
+  }
+
   changePage(page) {
     this.setState({ activePage: page});
   }
@@ -60,7 +71,7 @@ class Contracts extends React.Component {
   render() {
     function SelectedContract(props) {
       if (props && props.contract) {
-        return <ContractData changeRent={props.changeRent} contract={props.contract} />;
+        return <ContractData settlerContracts={props.settlerContracts} onLeased={props.onLeased} onError={props.onError} changeRent={props.changeRent} contract={props.contract} />;
       }
       return <div className={s.noContractWrapper}>Select a contract</div>;
     }
@@ -78,6 +89,19 @@ class Contracts extends React.Component {
             <h4>Great! The contract was create successfully!</h4>
             <p>The transaction is currently pending and waiting for confirmations... <a target="_blank" href={`https://ropsten.etherscan.io/tx/${props.pendingTrx}`}>Click here to see more details about the transaction.</a></p>
           </Alert>)
+      }
+
+      return null;
+    }
+
+    function Error(props) {
+      if (props.error) {
+        return (
+          <Alert bsStyle="danger" onDismiss={props.handleDismiss}>
+            <h4>Oups! An error occured!</h4>
+            <p>{props.error}</p>
+          </Alert>
+        )
       }
 
       return null;
@@ -130,6 +154,7 @@ class Contracts extends React.Component {
     return (
       <div>
       <Transaction pendingTrx={this.state.pendingTrx} handleDismiss={this.handleDismiss.bind(this)}/>
+      <Error error={this.state.error} handleDismiss={this.handleDismiss.bind(this)} />
       <div className="panel panel-default">
         <div className="panel-heading">
           <h4>
@@ -155,7 +180,7 @@ class Contracts extends React.Component {
               <Pager nbItems={this.props.contracts.length} handleSelect={this.changePage.bind(this)} activePage={this.state.activePage} itemsPerPage={this.state.itemsPerPage}/>
             </div>
             <div className="col-md-7">
-              <SelectedContract changeRent={this.handleChangeRent.bind(this)} contract={this.state.selectedContract} />
+              <SelectedContract settlerContracts={this.props.contracts.filter(c => {return c.contractState === '6';})} onLeased={this.handleOnLeased.bind(this)} onError={this.handleOnError.bind(this)} changeRent={this.handleChangeRent.bind(this)} contract={this.state.selectedContract} />
             </div>
           </div>
         </div>
