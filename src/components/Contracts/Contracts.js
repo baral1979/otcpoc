@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Tooltip, OverlayTrigger, Alert, Pagination } from 'react-bootstrap';
+import { Tooltip, OverlayTrigger, Alert, Pagination, Glyphicon } from 'react-bootstrap';
 import NewContract from './NewContract';
 import ContractData from './ContractData';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -8,6 +8,7 @@ import s from './Contracts.css';
 import ethConnect from '../../helpers/eth';
 import OTC from '../../helpers/otc';
 import Trx from '../Trx';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 class Contracts extends React.Component {
   constructor(props) {
@@ -27,6 +28,7 @@ class Contracts extends React.Component {
   selectContract(event) {
     const contract = event;
     console.log(event);
+    
     this.ethClient
       .getContractTicket(OTC.epayContract.abi, contract)
       .then(data => {
@@ -153,6 +155,11 @@ class Contracts extends React.Component {
                   {item}
                 </span>
               </td>
+              <td className='cursor'>
+                <CopyToClipboard text={item}>
+                  <Glyphicon glyph="copy" />
+                </CopyToClipboard>
+                </td>
             </tr>,
           )}
         </tbody>
@@ -198,6 +205,7 @@ class Contracts extends React.Component {
                     <tr>
                       <th>#</th>
                       <th>Contract Address</th>
+                      <th></th>
                     </tr>
                   </thead>
                   <ContractList

@@ -89,7 +89,7 @@ class Contracts extends React.Component {
               <tr>
                 <td>Owner</td>
                 <td>
-                  <Address address={this.props.contract.set} />
+                  <Address address={this.props.contract.owner} />
                 </td>
               </tr>
               <tr>

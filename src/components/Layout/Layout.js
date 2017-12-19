@@ -18,6 +18,7 @@ import Header from '../Header';
 import Feedback from '../Feedback';
 import Footer from '../Footer';
 
+
 class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
