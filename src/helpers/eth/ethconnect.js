@@ -90,7 +90,7 @@ function ethConnect() {
             seller: data[7],
             buyer: data[8],
             contractState: data[9].toString(),
-            description: web3.toAscii(data[10].toString())
+            description: web3.toAscii(data[10].toString()),
           });
         })
         .catch(err => reject(err));

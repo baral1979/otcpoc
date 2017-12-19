@@ -16,13 +16,17 @@ class InputEther extends React.Component {
 
   handleChange(e) {
     if (this.props.valueChange)
-      this.props.valueChange(e.target.value*1000000000000000000/1000);
+      this.props.valueChange(e.target.value * 1000000000000000000 / 1000);
   }
 
   render() {
     return (
       <div className="input-group">
-        <input onChange={this.handleChange.bind(this)} type="number" className="form-control"/>
+        <input
+          onChange={this.handleChange.bind(this)}
+          type="number"
+          className="form-control"
+        />
         <span className="input-group-addon">Finney</span>
       </div>
     );

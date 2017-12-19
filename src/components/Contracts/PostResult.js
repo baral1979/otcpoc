@@ -21,7 +21,7 @@ class PostResult extends React.Component {
     this.state = {
       showModel: false,
       result: '',
-      errorCount: 0
+      errorCount: 0,
     };
     this.interval = null;
     this.ethClient = undefined;
@@ -29,19 +29,21 @@ class PostResult extends React.Component {
 
   updateAccount() {
     const self = this;
-    this.ethClient.getAccounts().then(accounts => {
+    this.ethClient
+      .getAccounts()
+      .then(accounts => {
+        if (!accounts || accounts.length === 0) {
+          self.setState({ address: '', errorCount: self.state.errorCount + 1 });
 
-      if (!accounts || accounts.length === 0) {
-        self.setState({address: "", errorCount: (self.state.errorCount+1)});
-
-        return;
-      }
-      self.setState({
-        address: accounts[0]
+          return;
+        }
+        self.setState({
+          address: accounts[0],
+        });
+      })
+      .catch(err => {
+        console.log('err', err);
       });
-    }).catch(err => {
-      console.log('err', err)
-    });
   }
 
   componentDidMount() {
@@ -49,9 +51,7 @@ class PostResult extends React.Component {
     this.ethClient = new ethConnect();
   }
 
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
 
   close() {
     clearInterval(this.interval);
@@ -76,20 +76,23 @@ class PostResult extends React.Component {
     this.setState({ fee: e.target.value });
   }
 
-
   create() {
-      const self = this;
+    const self = this;
     const contract = this.ethClient.getContract(
       OTC.epayContract.abi,
-      OTC.epayContract.address
+      OTC.epayContract.address,
     );
 
     if (contract) {
-      const promise = contract.defineSettlement(10000000,  web3.fromAscii(this.state.settlement) ,{
-        from: "0xc7833955f16c75650f5d3de117843f521cc3a947",
-        gasLimit: 90000,
-        gasPrice: 90000
-      });
+      const promise = contract.defineSettlement(
+        10000000,
+        web3.fromAscii(this.state.settlement),
+        {
+          from: '0xc7833955f16c75650f5d3de117843f521cc3a947',
+          gasLimit: 90000,
+          gasPrice: 90000,
+        },
+      );
       promise
         .then(response => {
           self.props.onCreate(response);
@@ -100,24 +103,31 @@ class PostResult extends React.Component {
   }
 
   render() {
-    if (this.props.show !== true)
-      return null;
+    if (this.props.show !== true) return null;
     const readonly = true;
 
     function AddressStatus(props) {
-      if (props.sellerAddress != '')
-         return null;
+      if (props.sellerAddress != '') return null;
 
-      if (props.errorCount >=1) {
-          return (<span className="label label-danger">Having trouble loading address... Make sure your are logged in Metamask!</span>);
+      if (props.errorCount >= 1) {
+        return (
+          <span className="label label-danger">
+            Having trouble loading address... Make sure your are logged in
+            Metamask!
+          </span>
+        );
       }
 
-      return (<span className="label label-info">Loading input address from Metamask..</span>);
+      return (
+        <span className="label label-info">
+          Loading input address from Metamask..
+        </span>
+      );
     }
 
     return (
       <div className="yoyo">
-        <Button  bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
+        <Button bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
           Post Result
         </Button>
 
@@ -127,13 +137,15 @@ class PostResult extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <h5>Reporter Address</h5>
-            <span>{this.state.address}</span>
-              <h5>Fee (in Finney)</h5>
-              <FormControl
-                type="number"
-                onChange={this.setFee.bind(this)}
-                placeholder="Fee"
-              />
+            <span>
+              {this.state.address}
+            </span>
+            <h5>Fee (in Finney)</h5>
+            <FormControl
+              type="number"
+              onChange={this.setFee.bind(this)}
+              placeholder="Fee"
+            />
 
             <h5>Result</h5>
             <FormControl
@@ -142,7 +154,6 @@ class PostResult extends React.Component {
               placeholder="Settlement"
               value={this.state.settlement}
             />
-
           </Modal.Body>
           <Modal.Footer>
             <Button className="btn-success" onClick={this.create.bind(this)}>

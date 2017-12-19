@@ -22,7 +22,7 @@ class LeaseContract extends React.Component {
 
     this.state = {
       showModel: false,
-      errorCount: 0
+      errorCount: 0,
     };
 
     this.ethClient = undefined;
@@ -33,9 +33,7 @@ class LeaseContract extends React.Component {
     this.ethClient = new ethConnect();
   }
 
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
 
   close() {
     this.setState({ showModal: false });
@@ -51,8 +49,8 @@ class LeaseContract extends React.Component {
 
   handleMetaMaskAddress(address) {
     this.setState({
-      leaserAddress: address
-    })
+      leaserAddress: address,
+    });
   }
 
   create() {
@@ -66,9 +64,9 @@ class LeaseContract extends React.Component {
     if (contract) {
       const promise = contract.lease({
         from: this.state.leaserAddress,
-        value: this.state.rent ,
+        value: this.state.rent,
         gasLimit: 90000,
-        gasPrice: 200000000000
+        gasPrice: 200000000000,
       });
 
       promise
@@ -81,18 +79,16 @@ class LeaseContract extends React.Component {
           self.close();
         });
     }
-
   }
 
   render() {
-    if (this.props.contract.contractState != '1')
-       return null;
+    if (this.props.contract.contractState != '1') return null;
 
     const readonly = true;
 
     return (
       <div className="yoyo">
-        <Button  bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
+        <Button bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
           Lease Contract
         </Button>
 
@@ -102,12 +98,18 @@ class LeaseContract extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <h5>Leaser Address</h5>
-             <MetaMaskAddress onAddress={this.handleMetaMaskAddress.bind(this)} />
+            <MetaMaskAddress
+              onAddress={this.handleMetaMaskAddress.bind(this)}
+            />
             <h5>Rent (in Finney)</h5>
-            <InputEther valueChange={this.setRent.bind(this)}/>
+            <InputEther valueChange={this.setRent.bind(this)} />
           </Modal.Body>
           <Modal.Footer>
-            <Button disabled={!this.state.leaserAddress} className="btn-success" onClick={this.create.bind(this)}>
+            <Button
+              disabled={!this.state.leaserAddress}
+              className="btn-success"
+              onClick={this.create.bind(this)}
+            >
               Lease Contract
             </Button>
             <Button onClick={this.close.bind(this)}>Close</Button>

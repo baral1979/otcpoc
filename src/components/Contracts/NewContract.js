@@ -12,7 +12,6 @@ import Address from '../Address';
 import ethConnect from '../../helpers/eth';
 import OTC from '../../helpers/otc';
 
-
 class NewContract extends React.Component {
   constructor(props) {
     super(props);
@@ -21,7 +20,7 @@ class NewContract extends React.Component {
       showModel: false,
       inputAddress: '',
       readOnly: '',
-      errorCount: 0
+      errorCount: 0,
     };
 
     this.ethClient = undefined;
@@ -29,28 +28,29 @@ class NewContract extends React.Component {
 
   updateAccount() {
     const self = this;
-    this.ethClient.getAccounts().then(accounts => {
+    this.ethClient
+      .getAccounts()
+      .then(accounts => {
+        if (!accounts || accounts.length === 0) {
+          self.setState({
+            inputAddress: '',
+            errorCount: self.state.errorCount + 1,
+          });
 
-      if (!accounts || accounts.length === 0) {
-        self.setState({inputAddress: "", errorCount: (self.state.errorCount+1)});
-
-        return;
-      }
-      self.setState({
-        inputAddress: accounts[0]
+          return;
+        }
+        self.setState({
+          inputAddress: accounts[0],
+        });
+      })
+      .catch(err => {
+        console.log('err', err);
       });
-    }).catch(err => {
-      console.log('err', err)
-    });
   }
 
-  componentDidMount() {
+  componentDidMount() {}
 
-  }
-
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
 
   close() {
     clearInterval(this.interval);
@@ -82,7 +82,7 @@ class NewContract extends React.Component {
       const promise = contract.createContract(
         parseInt(this.state.rent) * 1000000000000000,
         this.state.inputAddress,
-        web3.fromAscii("undefined"),
+        web3.fromAscii('undefined'),
         {
           from: this.state.inputAddress,
           gas: 2000000,
@@ -104,14 +104,22 @@ class NewContract extends React.Component {
     const readonly = true;
 
     function AddressStatus(props) {
-      if (props.inputAddress != '')
-         return null;
+      if (props.inputAddress != '') return null;
 
-      if (props.errorCount >=1) {
-          return (<span className="label label-danger">Having trouble loading address... Make sure your are logged in Metamask!</span>);
+      if (props.errorCount >= 1) {
+        return (
+          <span className="label label-danger">
+            Having trouble loading address... Make sure your are logged in
+            Metamask!
+          </span>
+        );
       }
 
-      return (<span className="label label-info">Loading input address from Metamask..</span>);
+      return (
+        <span className="label label-info">
+          Loading input address from Metamask..
+        </span>
+      );
     }
 
     return (
@@ -126,8 +134,11 @@ class NewContract extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <h5>Input Address</h5>
-            {this.state.inputAddress} <AddressStatus inputAddress={this.state.inputAddress} errorCount={this.state.errorCount}/>
-
+            {this.state.inputAddress}{' '}
+            <AddressStatus
+              inputAddress={this.state.inputAddress}
+              errorCount={this.state.errorCount}
+            />
             <h5>Rent (in Finney)</h5>
             <FormControl
               type="number"

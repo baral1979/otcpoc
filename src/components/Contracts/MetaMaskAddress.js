@@ -26,22 +26,24 @@ class MetaMaskAddress extends React.Component {
   updateAccount() {
     const self = this;
     console.log('update Metamask');
-    this.ethClient.getAccounts().then(accounts => {
+    this.ethClient
+      .getAccounts()
+      .then(accounts => {
+        if (!accounts || accounts.length === 0) {
+          self.setState({ address: '', errorCount: self.state.errorCount + 1 });
+          return;
+        }
 
-      if (!accounts || accounts.length === 0) {
-        self.setState({address: "", errorCount: (self.state.errorCount+1)});
-        return;
-      }
-
-      if (accounts[0] !== self.state.address) {
-        self.setState({
-          address: accounts[0]
-        });
-        self.props.onAddress(accounts[0]);
-      }
-    }).catch(err => {
-      console.log('err', err)
-    });
+        if (accounts[0] !== self.state.address) {
+          self.setState({
+            address: accounts[0],
+          });
+          self.props.onAddress(accounts[0]);
+        }
+      })
+      .catch(err => {
+        console.log('err', err);
+      });
   }
 
   componentDidMount() {
@@ -58,18 +60,32 @@ class MetaMaskAddress extends React.Component {
 
   render() {
     function AddressStatus(props) {
-      if (props.address != '')
-         return null;
+      if (props.address != '') return null;
 
-      if (props.errorCount >=1) {
-          return (<span className="label label-danger">Having trouble loading address... Make sure your are logged in Metamask!</span>);
+      if (props.errorCount >= 1) {
+        return (
+          <span className="label label-danger">
+            Having trouble loading address... Make sure your are logged in
+            Metamask!
+          </span>
+        );
       }
 
-      return (<span className="label label-info">Loading input address from Metamask..</span>);
+      return (
+        <span className="label label-info">
+          Loading input address from Metamask..
+        </span>
+      );
     }
 
     return (
-      <span>{this.state.address}<AddressStatus errorCount={this.state.errorCount} address={this.state.address}/></span>
+      <span>
+        {this.state.address}
+        <AddressStatus
+          errorCount={this.state.errorCount}
+          address={this.state.address}
+        />
+      </span>
     );
   }
 }

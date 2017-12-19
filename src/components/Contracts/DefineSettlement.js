@@ -16,7 +16,6 @@ import s from './Claim.css';
 import InputEther from './InputEther';
 import MetaMaskAddress from './MetaMaskAddress';
 
-
 class DefineSettlement extends React.Component {
   constructor(props) {
     super(props);
@@ -34,9 +33,7 @@ class DefineSettlement extends React.Component {
     this.ethClient = new ethConnect();
   }
 
-  componentWillUnmount() {
-
-  }
+  componentWillUnmount() {}
 
   close() {
     this.setState({ showModal: false });
@@ -56,25 +53,28 @@ class DefineSettlement extends React.Component {
 
   handleMetaMaskAddress(address) {
     this.setState({
-      sellerAddress: address
-    })
+      sellerAddress: address,
+    });
   }
-
 
   create() {
     const self = this;
 
     const contract = this.ethClient.getContract(
       OTC.epayContract.abi,
-      OTC.epayContract.address
+      OTC.epayContract.address,
     );
 
     if (contract) {
-      const promise = contract.defineSettlement(10000000,  web3.fromAscii(this.state.settlement) ,{
-        from: this.state.sellerAddress,
-        gasLimit: 90000,
-        gasPrice: 90000
-      });
+      const promise = contract.defineSettlement(
+        10000000,
+        web3.fromAscii(this.state.settlement),
+        {
+          from: this.state.sellerAddress,
+          gasLimit: 90000,
+          gasPrice: 90000,
+        },
+      );
 
       promise
         .then(response => {
@@ -87,13 +87,12 @@ class DefineSettlement extends React.Component {
   }
 
   render() {
-    if (this.props.show !== true)
-      return null;
+    if (this.props.show !== true) return null;
     const readonly = true;
 
     return (
       <div className="yoyo">
-        <Button  bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
+        <Button bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
           Define Settlement
         </Button>
 
@@ -103,9 +102,11 @@ class DefineSettlement extends React.Component {
           </Modal.Header>
           <Modal.Body>
             <h5>Seller Address</h5>
-            <MetaMaskAddress onAddress={this.handleMetaMaskAddress.bind(this)} />
-              <h5>Fee (in Finney)</h5>
-              <InputEther valueChange={this.setFee.bind(this)}/>
+            <MetaMaskAddress
+              onAddress={this.handleMetaMaskAddress.bind(this)}
+            />
+            <h5>Fee (in Finney)</h5>
+            <InputEther valueChange={this.setFee.bind(this)} />
             <h5>Settlement</h5>
             <FormControl
               type="string"
@@ -115,7 +116,11 @@ class DefineSettlement extends React.Component {
             />
           </Modal.Body>
           <Modal.Footer>
-            <Button disabled={!this.state.sellerAddress} className="btn-success" onClick={this.create.bind(this)}>
+            <Button
+              disabled={!this.state.sellerAddress}
+              className="btn-success"
+              onClick={this.create.bind(this)}
+            >
               Define Settlement
             </Button>
             <Button onClick={this.close.bind(this)}>Close</Button>
