@@ -9,7 +9,14 @@ import SellContract from './SellContract';
 import LeaseContract from './LeaseContract';
 import DefineSettlement from './DefineSettlement';
 import DefineContingentPayment from './DefineContingentPayment';
+import CancelOffer from './CancelOffer';
+import Purchase from './Purchase';
 import PostResult from './PostResult';
+import ChangeBuyerPrice from './ChangeBuyerPrice';
+import ChangeSellerPrice from './ChangeSellerPrice';
+import PurchaseSellerPosition from './PurchaseSellerPosition';
+import PurchaseBuyerPosition from './PurchaseBuyerPosition';
+import Settle from './Settle';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 class Contracts extends React.Component {
@@ -26,6 +33,12 @@ class Contracts extends React.Component {
           break;
         case '2':
           text = 'Leased';
+          break;
+          case '3':
+          text = 'Offered';
+          break;
+        case '4':
+          text = 'Matched';
           break;
         case '6':
           text = 'Settlement pending';
@@ -122,6 +135,40 @@ class Contracts extends React.Component {
               contract={this.props.contract}
               onError={this.props.onError}
             />
+          <CancelOffer
+              contract={this.props.contract}
+              onCreate={this.props.onLeased}
+              onError={this.props.onError}
+            />
+           <Purchase
+                contract={this.props.contract}
+                onCreate={this.props.onLeased}
+                onError={this.props.onError}
+              />
+            <ChangeBuyerPrice
+                   contract={this.props.contract}
+                   onCreate={this.props.onLeased}
+                   onError={this.props.onError}
+                 />
+            <ChangeSellerPrice
+                  contract={this.props.contract}
+                  onCreate={this.props.onLeased}
+                  onError={this.props.onError}
+                  />
+                  <PurchaseSellerPosition
+                        contract={this.props.contract}
+                        onCreate={this.props.onLeased}
+                        onError={this.props.onError}
+                        />
+                        <PurchaseBuyerPosition
+                                contract={this.props.contract}
+                                onCreate={this.props.onLeased}
+                                onError={this.props.onError}
+                                /><Settle
+                                        contract={this.props.contract}
+                                        onCreate={this.props.onLeased}
+                                        onError={this.props.onError}
+                                        />
             <DefineSettlement
               show={this.props.contract.contractState === '2'}
               onCreate={this.props.onCreate}

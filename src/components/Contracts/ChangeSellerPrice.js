@@ -16,14 +16,12 @@ import s from './Claim.css';
 import InputEther from './InputEther';
 import MetaMaskAddress from './MetaMaskAddress';
 
-class ContingentPayment extends React.Component {
+class ChangeSellerPrice extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       showModel: false,
-      settlerAddress: '',
-      bid: 0,
-      value: 0,
+      sellerAddress: ''
     };
 
     this.ethClient = undefined;
@@ -44,16 +42,10 @@ class ContingentPayment extends React.Component {
     this.setState({ showModal: true });
   }
 
-  setBid(value) {
-    this.setState({ bid: value });
-  }
-
-  setValue(val) {
-    this.setState({ value: val });
-  }
-
-  setSettlerAddress(e) {
-    this.setState({ settlerAddress: e.target.value });
+  setUnits(value) {
+    this.setState({
+      units: value,
+    });
   }
 
   handleMetaMaskAddress(address) {
@@ -72,15 +64,13 @@ class ContingentPayment extends React.Component {
 
     if (contract) {
 
-      const promise = contract.confirmOffer(
-        this.state.settlerAddress,
-        this.state.value,
+      const promise = contract.confirmPurchase(
         {
-          from: this.state.sellerAddress,
-          value: this.state.bid,
+          from: this.state.buyerAddress,
+          value: this.state.units,
           gasLimit: 90000,
           gasPrice: 200000000000,
-        },
+        }
       );
 
       promise
@@ -102,48 +92,37 @@ class ContingentPayment extends React.Component {
   }
 
   render() {
-    if (this.props.contract.contractState != '2') return null;
+    if (this.props.contract.contractState != '4') return null;
 
     const readonly = true;
 
     return (
       <div className="yoyo">
         <Button bsStyle="success" bsSize="small" onClick={this.open.bind(this)}>
-          Define Contingent Payment
+          Change Seller Price
         </Button>
 
         <Modal show={this.state.showModal} onHide={this.close.bind(this)}>
           <Modal.Header>
-            <Modal.Title>Define Settlement</Modal.Title>
+            <Modal.Title>Change Seller Price</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <h5>Settler Address</h5>
-            <FormControl
-              type="string"
-              onChange={this.setSettlerAddress.bind(this)}
-              placeholder="Settler Address"
-            />
-
             <h5>Seller Address</h5>
             <MetaMaskAddress
               onAddress={this.handleMetaMaskAddress.bind(this)}
             />
-
-            <h5>Contract (in Finney)</h5>
-            <InputEther valueChange={this.setValue.bind(this)} />
-
-            <h5>Bid (in Finney)</h5>
-            <InputEther valueChange={this.setBid.bind(this)} />
+            <h5>New seller position price (in Finney)</h5>
+            <InputEther valueChange={this.setUnits.bind(this)} />
           </Modal.Body>
           <Modal.Footer>
             <Button
-              disabled={!this.state.sellerAddress}
+              disabled={!this.state.sellerAddress2}
               className="btn-success"
               onClick={this.create.bind(this)}
             >
-              Define Contingent Payment
+              Change Seller Price
             </Button>
-            <Button onClick={this.close.bind(this)}>Close</Button>
+            <Button onClick={this.close.bind(this)}>Cancel</Button>
           </Modal.Footer>
         </Modal>
       </div>
@@ -151,4 +130,4 @@ class ContingentPayment extends React.Component {
   }
 }
 
-export default withStyles(s)(ContingentPayment);
+export default withStyles(s)(ChangeSellerPrice);
