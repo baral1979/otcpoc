@@ -3,10 +3,12 @@ import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import s from './Home2.css';
 import ethConnect from '../../helpers/eth';
 import OTC from '../../helpers/otc';
-
+import ContractList from '../../containers/contractList';
 import Loader from '../../components/Loader';
 import Contracts from '../../components/Contracts';
 import Error from '../../components/Error';
+import Actions from '../../actions';
+
 
 class Home2 extends React.Component {
   constructor(props) {
@@ -34,6 +36,7 @@ class Home2 extends React.Component {
     const self = this;
     try {
       this.ethClient = new ethConnect();
+      Actions.setClient(new ethConnect());
     } catch (e) {
       self.setState({state: 2});
       return;
@@ -56,22 +59,16 @@ class Home2 extends React.Component {
   }
 
   render() {
-    if (this.state.state === 1)
-      return <Loader/>
-
-    if (this.state.state === 2)
-      return <Error/>
 
         return (
-          <div className={s.root}>
-            <div className={s.container}>
-              <br />
+          <div className="content">
 
+                <ContractList/>
 
                 <Contracts contracts={this.state.contracts} />
 
 
-            </div>
+
           </div>
         );
 

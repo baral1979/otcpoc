@@ -66,13 +66,14 @@ class DefineSettlement extends React.Component {
     );
 
     if (contract) {
+        console.log('fee', this.state.fee);
       const promise = contract.defineSettlement(
         10000000,
         web3.fromAscii(this.state.settlement),
         {
           from: this.state.sellerAddress,
           gasLimit: 90000,
-          gasPrice: 90000,
+          gasPrice: 200000000000,
         },
       );
 
@@ -87,7 +88,7 @@ class DefineSettlement extends React.Component {
   }
 
   render() {
-    if (this.props.show !== true) return null;
+    if (this.props.contract.contractState !== '2') return null;
     const readonly = true;
 
     return (

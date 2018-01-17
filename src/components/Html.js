@@ -50,14 +50,9 @@ class Html extends React.Component {
             <link key={script} rel="preload" href={script} as="script" />,
           )}
           <link rel="apple-touch-icon" href="apple-touch-icon.png" />
-          <link
-            rel="stylesheet"
-            href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css"
-          />
-          <link
-            rel="stylesheet"
-            href="/site.css"
-          />
+          <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+          <link href="/assets/animate.min.css" rel="stylesheet"/>
+          <link href="/assets/light-bootstrap-dashboard.css" rel="stylesheet"/>
           {styles.map(style =>
             <style
               key={style.id}

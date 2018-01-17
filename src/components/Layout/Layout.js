@@ -26,11 +26,10 @@ class Layout extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="main-panel">
+          <Header/>
+          {this.props.children}
 
-        {this.props.children}
-
-        <Footer />
       </div>
     );
   }

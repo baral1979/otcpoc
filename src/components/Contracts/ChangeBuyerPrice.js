@@ -62,12 +62,24 @@ class ChangeBuyerPrice extends React.Component {
       self.props.contract.address,
     );
 
+    // var TF = this.epayContract.tradeBuyer(this.ETHEREUM_CLIENT.toWei(event.target.PRICE.value, 'ether'), {from: event.target.BUYER.value, gasLimit:90000, gasPrice:200000000000} );
+		// alert('A settlement request was submitted: ' + TF );
+    //
+		// var valueData = this.epayContract.getTicket();
+		// var SettlementDescription = valueData[10];
+		// if (valueData[9].c[0] === 3 || valueData[9].c[0] === 4){
+		//    SettlementDescription = this.ETHEREUM_CLIENT.eth.contract(epayContractABI).at(valueData[6]).description.call();
+		// }
+
+
+
+
     if (contract) {
 
-      const promise = contract.confirmPurchase(
+      const promise = contract.tradeBuyer(
+        this.state.units,
         {
           from: this.state.buyerAddress,
-          value: this.state.units,
           gasLimit: 90000,
           gasPrice: 200000000000,
         }

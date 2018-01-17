@@ -77,7 +77,7 @@ function ethConnect() {
       contract
         .getTicket()
         .then(data => {
-          console.log(data);
+          console.log('10', data[10]);
           resolve({
             address: at,
             value: data[0].toString(),
@@ -90,7 +90,7 @@ function ethConnect() {
             seller: data[7],
             buyer: data[8],
             contractState: data[9].toString(),
-            description: web3.toAscii(data[10].toString()),
+            description: web3.toAscii(data[10].toString()).toString(),
           });
         })
         .catch(err => reject(err));
