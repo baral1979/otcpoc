@@ -1,5 +1,6 @@
 const initialState = {
-  items: []
+  items: [],
+  selected: undefined
 }
 
 const getStateText = function(state) {
@@ -28,7 +29,17 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "ADD_CONTRACT":
       action.payload.stateText = getStateText(action.payload.contractState);
-    //  console.log('action.payload.stateText', action.payload.state, action.payload.stateText);
+//    console.log(action.payload.description, action.payload.description.length);
+
+
+      var desc = "";
+      for(var i = 0; i < action.payload.description.length; i++)
+        if (action.payload.description.charCodeAt(i) > 0)
+          desc += action.payload.description[i];
+
+      action.payload.description = desc;
+
+
       state = {
         ...state,
             items: state.items.concat(action.payload)
@@ -46,6 +57,13 @@ const reducer = (state = initialState, action) => {
         items: action.payload,
       };
       break;
+
+      case "SELECT_CONTRACT":
+        state = {
+          ...state,
+          selected: action.payload,
+        };
+        break;
   }
 
   return state;

@@ -62,13 +62,7 @@ class Home2 extends React.Component {
 
         return (
           <div className="content">
-
                 <ContractList/>
-
-                <Contracts contracts={this.state.contracts} />
-
-
-
           </div>
         );
 

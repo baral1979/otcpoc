@@ -12,6 +12,14 @@ const setContracts = (contracts) => {
   };
 };
 
+const selectContract = (contract) => {
+  return {
+    type: 'SELECT_CONTRACT',
+    payload: contract
+  };
+};
+
+
 const setAddress = (address) => {
   return {
     type: 'SET_ADDRESS',
@@ -19,8 +27,42 @@ const setAddress = (address) => {
   };
 };
 
+const addTransaction = (trx) => {
+  return {
+    type: 'ADD_TRX',
+    payload: trx
+  };
+};
+
+const removeTransaction = (trx) => {
+  return {
+    type: 'REMOVE_TRX',
+    payload: trx
+  };
+};
+
+const addNotification = (notif) => {
+  return {
+    type: 'ADD_NOTIF',
+    payload: notif
+  };
+};
+
+const removeNotification = (notif) => {
+  return {
+    type: 'REMOVE_NOTIF',
+    payload: notif
+  };
+};
+
+
 export default {
   addContract : addContract,
   setContracts : setContracts,
-  setAddress: setAddress
+  setAddress: setAddress,
+  selectContract: selectContract,
+  addTransaction: addTransaction,
+  removeTransaction: removeTransaction,
+  addNotification: addNotification,
+  removeNotification: removeNotification
 }

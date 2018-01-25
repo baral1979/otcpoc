@@ -9,7 +9,6 @@ const reducers = combineReducers({
   notifications: notificationReducer,
   transactions: transactionReducer,
   user: userReducer
-
 })
 
 export default reducers;

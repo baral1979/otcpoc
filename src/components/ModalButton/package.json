@@ -1,0 +1,6 @@
+{
+  "name": "ModalButton",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./ModalButton.js"
+}

@@ -3,13 +3,20 @@ import { bindActionCreators } from 'redux';
 import {connect} from 'react-redux';
 import actions from '../actions';
 import Card from '../components/Card';
-import { Grid, Row, Col, Table } from 'react-bootstrap';
+import Eth from '../components/Eth';
+import Address from '../components/Address';
+import { Alert, Grid, Row, Col, Table } from 'react-bootstrap';
 import ethConnect from '../helpers/eth';
 import OTC from '../helpers/otc';
+import CreateContract from '../components/Buttons/CreateContract'
+import LeaseAny from '../components/Buttons/LeaseAny'
+import LeaseContract from '../components/Buttons/LeaseContract'
+import DefineSettlement from '../components/Buttons/DefineSettlement'
+import Trx from '../components/Trx';
 
 class ContractList extends Component {
 
-  componentDidMount() {
+  refreshContracts(selectAddress) {
     this.props.setContracts([]);
 
     try {
@@ -17,18 +24,20 @@ class ContractList extends Component {
       client.getContracts(OTC.spawnContract.abi, OTC.spawnContract.address).then(data => {
         var addresses = data[0];
         var contracts = [];
+
         for (var i = 0; i < addresses.length; i++) {
           var address = addresses[i];
 
           client.getContractTicket(OTC.epayContract.abi, address)
           .then(data => {
-            console.log('selected contract', data);
+            if (selectAddress && data.address === selectAddress)
+              this.props.selectContract(data);
+
             this.props.addContract(data);
-
-            //this.setState({ selectedContract: data });
           });
-
         }
+
+
 
       }).catch(err => {
         console.log('contract error', err);
@@ -39,27 +48,202 @@ class ContractList extends Component {
     }
   }
 
+  componentDidMount() {
+    this.refreshContracts();
+  }
+
+  rowClick(contract) {
+    this.props.selectContract(contract);
+  }
+
+  epayContract(client) {
+
+    if (this.props.selectedContract && client)
+    {
+      return client.getContract(
+        OTC.epayContract.abi,
+        this.props.selectedContract.address
+      );
+    }
+
+    return null;
+  }
+
+  postSettlementContract(data) {
+    const self = this;
+    var client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.defineSettlement(data.fee, web3.fromAscii(data.settlement), {
+        from: data.seller,
+        gasLimit: 90000,
+        gasPrice: 200000000000,
+      });
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({ style: 'success', title: 'Define Settlement Contract', message: 'Settlement contract was successully defined. Waiting for the transaction to be mined.'})
+          self.props.addTransaction(response);
+        })
+        .catch(err => {console.log(err); self.props.addNotification({ style: 'danger', title: 'Define Settlement Contract Error', message: `An error has occured. ${err}`}) });
+    }
+  }
+
+  leaseContract(data) {
+    const self = this;
+    var client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.lease({
+        from: data.leaser,
+        value: data.rent,
+        gasLimit: 2000000,
+        gasPrice: 200000000000,
+      });
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({ style: 'success', title: 'Lease contract', message: 'Contract was successully leased. Waiting for the transaction to be mined.'})
+          self.props.addTransaction(response);
+        })
+        .catch(err => {console.log(err); self.props.addNotification({ style: 'danger', title: 'Lease contract', message: `Lease contract failed. ${err}`}) });
+    }
+  }
+
+  createContract(data) {
+    const self = this;
+    var client = new ethConnect();
+
+    const contract = client.getContract(
+      OTC.spawnContract.abi,
+      OTC.spawnContract.address,
+    );
+
+    if (contract) {
+      const promise = contract.createContract(
+        parseInt(data.rent) * 1000000000000000,
+        data.address,
+        web3.fromAscii('undefined'),
+        {
+          from: data.address,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        },
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({ style: 'success', title: 'New contract', message: 'Contract was successully created. Waiting for the transaction to be mined.'})
+          self.props.addTransaction(response);
+        })
+        .catch(err => self.props.addNotification({ style: 'danger', title: 'New contract', message: `Contract creation failed. ${err}`}));
+    }
+  }
+
+  removeTransaction(trx) {
+    this.props.removeTransaction(trx);
+  }
+
+  removeNotification(notif) {
+    this.props.removeNotification(notif);
+  }
 
   render() {
     const thArray = ["Address","Description","State"];
-    const tdArray = [
-        [ "1" , "Dakota Rice" , "$36,738" , "Niger" , "Oud-Turnhout" ] ,
-        [ "2" , "Minerva Hooper" , "$23,789" , "Curaçao" , "Sinaai-Waas" ] ,
-        [ "3" , "Sage Rodriguez" , "$56,142" , "Netherlands" , "Baileux" ] ,
-        [ "4" , "Philip Chaney" , "$38,735" , "Korea, South" , "Overland Park" ] ,
-        [ "5" , "Doris Greene" , "$63,542" , "Malawi" , "Feldkirchen in Kärnten" ] ,
-        [ "6" , "Mason Porter" , "$78,615" , "Chile" , "Gloucester" ]
-    ];
 
+    var options = {
+      selectOnClick: true,
+    }
 
+    var SelectedContract = function(props) {
+      if (props.contract) {
+        return (<Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText} - ${props.contract.description}`}
+            ctTableFullWidth ctTableResponsive
+            content={
+                <Table hover>
+                    <thead>
+                        <tr>
+                          <th>Variable</th>
+                          <th>Value</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td>Value</td>
+                          <td><Eth wei={props.contract.value}/></td>
+                        </tr>
+                        <tr>
+                          <td>Rent</td>
+                          <td><Eth wei={props.contract.rent}/></td>
+                        </tr>
+                        <tr>
+                          <td>Owner</td>
+                          <td><Address address={props.contract.owner} showBalance={true}/></td>
+                        </tr>
+                        <tr>
+                          <td>Seller</td>
+                          <td><Address address={props.contract.seller} showBalance={true}/></td>
+                        </tr>
+                        <tr>
+                          <td>Buyer</td>
+                          <td><Address address={props.contract.buyer} showBalance={true}/></td>
+                        </tr>
+                    </tbody>
+                </Table>
+            }
+        />)
+      }
+
+      return null;
+    }
 
     return (
-      <Grid fluid>
+          <Grid fluid>
+                    <Row>
+                        <Col md={12}>
+                            {this.props.notifications.map(n => {
+                              return (
+                                <Alert onDismiss={this.removeNotification.bind(this, n)} bsStyle={n.style}><h4>{n.title}</h4>{n.message}</Alert>
+                              );
+                            })}
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col md={12}>
+                            {this.props.transactions.map(t => {
+                              return (
+                                <Alert onDismiss={this.removeTransaction.bind(this, t)} bsStyle="info"><Trx showSpinner={true} tx={t}/></Alert>
+                              );
+                            })}
+                        </Col>
+                    </Row>
+                    <Row>
+                      <Col md={12}>
+                          <CreateContract success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} address={this.props.user.address} />
+                          <CreateContract success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} address={this.props.user.address} />
+                          <LeaseAny success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} contracts={this.props.contracts.filter(x => {return x.contractState == 1; })} />
+                      </Col>
+                    </Row>
+                    <Row>
+                      <Col md={12}>
+                        <br/>
+                      </Col>
+                    </Row>
                     <Row>
                         <Col md={8}>
                             <Card
                                 title={this.props.contracts && this.props.contracts.length > 0 ? `Contracts (${this.props.contracts.length})` : 'Loading contracts...'}
-                                category="List of OTC contracts"
+                                category="OTC Contracts"
                                 ctTableFullWidth ctTableResponsive
                                 content={
                                     <Table striped hover>
@@ -78,9 +262,9 @@ class ContractList extends Component {
                                             {
                                                 this.props.contracts.map((contract,key) => {
                                                     return (
-                                                        <tr key={key}>
+                                                        <tr style={contract === this.props.selectedContract?{background: '#87cb16'}: {}}  onClick={this.rowClick.bind(this, contract)} key={key}>
                                                           <td>{contract.address}</td>
-                                                          <td>{contract.description}</td>
+                                                          <td>{contract.description.toString()}</td>
                                                           <td>{contract.stateText}</td>
                                                         </tr>
                                                     )
@@ -92,61 +276,37 @@ class ContractList extends Component {
                             />
                         </Col>
 
-
                         <Col md={4}>
-                            <Card
-                                plain
-                                title="Selected Contract Data"
-                                category="Current contract: "
-                                ctTableFullWidth ctTableResponsive
-                                content={
-                                    <Table hover>
-                                        <thead>
-                                            <tr>
-                                                {
-                                                    thArray.map((prop, key) => {
-                                                        return (
-                                                        <th  key={key}>{prop}</th>
-                                                        );
-                                                    })
-                                                }
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {
-                                                tdArray.map((prop,key) => {
-                                                    return (
-                                                        <tr key={key}>{
-                                                            prop.map((prop,key)=> {
-                                                                return (
-                                                                    <td  key={key}>{prop}</td>
-                                                                );
-                                                            })
-                                                        }</tr>
-                                                    )
-                                                })
-                                            }
-                                        </tbody>
-                                    </Table>
-                                }
-                            />
+                            <SelectedContract contract={this.props.selectedContract}/>
+                            <LeaseContract contract={this.props.selectedContract} success={this.leaseContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} address={this.props.user.address}/>
+                            <DefineSettlement contract={this.props.selectedContract} success={this.postSettlementContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} />
                         </Col>
-
                     </Row>
                 </Grid>
-
     );
   }
 }
 
 function mapStateToProps(state) {
   return {
-    contracts: state.contracts.items
+    contracts: state.contracts.items,
+    selectedContract: state.contracts.selected,
+    user: state.user,
+    transactions: state.transactions.items,
+    notifications: state.notifications.items
   };
 }
 
 function mapDispatchToProps(dispath) {
-  return bindActionCreators( { setContracts: actions.setContracts, addContract: actions.addContract }, dispath);
+  return bindActionCreators({
+    removeTransaction: actions.removeTransaction,
+    addTransaction: actions.addTransaction,
+    selectContract: actions.selectContract,
+    setContracts: actions.setContracts,
+    addContract: actions.addContract,
+    addNotification: actions.addNotification,
+    removeNotification: actions.removeNotification
+  }, dispath);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ContractList);

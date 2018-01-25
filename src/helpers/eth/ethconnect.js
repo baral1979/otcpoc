@@ -6,6 +6,7 @@ const metamask = require('metamascara');
 function ethConnect() {
   const MUST_BE_INITIALIZED = 'ethConnect must be initialized first!';
   const ADDRESS_MUST_BE_DEFINED = 'Address must be defined!';
+  const TRANSACTION_MUST_BE_DEFINED = 'Address must be defined!';
 
   let isInit = false,
     ethQuery,
@@ -71,13 +72,27 @@ function ethConnect() {
     });
   };
 
+  const getTransactionReceipt = function(trx) {
+    return new Promise((resolve, reject) => {
+      if (!isInit) reject(MUST_BE_INITIALIZED);
+
+      if (!trx || trx.length === 0) reject(TRANSACTION_MUST_BE_DEFINED);
+
+      ethQuery.getTransactionReceipt(trx, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result);
+      });
+    });
+  };
+
+
   const getContractTicket = function(abi, at) {
     return new Promise((resolve, reject) => {
       const contract = ethContract(abi).at(at);
       contract
         .getTicket()
         .then(data => {
-          console.log('10', data[10]);
           resolve({
             address: at,
             value: data[0].toString(),
@@ -107,6 +122,7 @@ function ethConnect() {
     getAccounts,
     getContractTicket,
     getContract,
+    getTransactionReceipt
   };
 }
 

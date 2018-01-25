@@ -20,7 +20,7 @@ export class StatsCard extends Component{
 
         function content(show, content) {
           return null;
-          console.log('contentn', content);
+
           if (show === true)
             return (content)
 
