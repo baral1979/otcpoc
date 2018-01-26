@@ -12,6 +12,7 @@ import CreateContract from '../components/Buttons/CreateContract'
 import LeaseAny from '../components/Buttons/LeaseAny'
 import LeaseContract from '../components/Buttons/LeaseContract'
 import DefineSettlement from '../components/Buttons/DefineSettlement'
+import PostContingentPaymentContract from '../components/Buttons/PostContingentPaymentContract'
 import Trx from '../components/Trx';
 
 class ContractList extends Component {
@@ -69,6 +70,30 @@ class ContractList extends Component {
     return null;
   }
 
+  postContingentPaymentContract(data) {
+    const self = this;
+    var client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.confirmOffer(data.settler, data.enter, {
+        from: data.seller,
+        value: data.bid,
+        gasLimit: 2000000,
+        gasPrice: 200000000000,
+      });
+
+      promise
+        .then(response => {
+          //self.refreshContracts(response);
+          self.props.addNotification({ style: 'success', title: 'Post Contingent Payment Contract Success', message: 'Contingent Payment Contract was successully posted. Waiting for the transaction to be mined.'})
+          self.props.addTransaction(response);
+        })
+        .catch(err => {console.log(err); self.props.addNotification({ style: 'danger', title: 'Post Contingent Payment Contract Error', message: `An error has occured. ${err}`}) });
+    }
+  }
+
   postSettlementContract(data) {
     const self = this;
     var client = new ethConnect();
@@ -101,14 +126,14 @@ class ContractList extends Component {
     if (contract) {
       const promise = contract.lease({
         from: data.leaser,
-        value: data.rent,
-        gasLimit: 2000000,
+        value: 200000000000,
+        gasLimit: 90000,
         gasPrice: 200000000000,
       });
 
       promise
         .then(response => {
-          self.refreshContracts(response);
+          //self.refreshContracts(response);
           self.props.addNotification({ style: 'success', title: 'Lease contract', message: 'Contract was successully leased. Waiting for the transaction to be mined.'})
           self.props.addTransaction(response);
         })
@@ -154,6 +179,10 @@ class ContractList extends Component {
   removeNotification(notif) {
     this.props.removeNotification(notif);
   }
+
+  //<CreateContract success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} address={this.props.user.address} />
+  //<LeaseAny success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} contracts={this.props.contracts.filter(x => {return x.contractState == 1; })} />
+
 
   render() {
     const thArray = ["Address","Description","State"];
@@ -230,8 +259,6 @@ class ContractList extends Component {
                     <Row>
                       <Col md={12}>
                           <CreateContract success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} address={this.props.user.address} />
-                          <CreateContract success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} address={this.props.user.address} />
-                          <LeaseAny success={this.createContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} contracts={this.props.contracts.filter(x => {return x.contractState == 1; })} />
                       </Col>
                     </Row>
                     <Row>
@@ -280,6 +307,9 @@ class ContractList extends Component {
                             <SelectedContract contract={this.props.selectedContract}/>
                             <LeaseContract contract={this.props.selectedContract} success={this.leaseContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} address={this.props.user.address}/>
                             <DefineSettlement contract={this.props.selectedContract} success={this.postSettlementContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} />
+                            <PostContingentPaymentContract settlers={this.props.contracts.filter(x => {return x.contractState == 6; })} contract={this.props.selectedContract} success={this.postContingentPaymentContract.bind(this)} disabled={this.props.user.address.indexOf("0x") !== 0} />
+
+
                         </Col>
                     </Row>
                 </Grid>

@@ -46,7 +46,7 @@ class ModalButton extends React.Component {
 
         return (
                 <Button className="btn-success" onClick={props.onClick.bind(this)}>
-                  OK2
+                  OK
                 </Button>
             );
     }
@@ -55,7 +55,7 @@ class ModalButton extends React.Component {
       return null;
 
     return (
-      <div>
+      <div style={{display:'block','margin-right': '1px', float: 'left'}}>
         <Button disabled={this.props.disabled} bsStyle={this.props.bsStyle} bsSize={this.props.bsSize} onClick={this.open.bind(this)}>
           {this.props.buttonText}
         </Button>
