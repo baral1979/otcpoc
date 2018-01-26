@@ -13,6 +13,7 @@ class InputEther extends React.Component {
   constructor(props) {
     super(props);
     this.didSwitchParentObject = true;
+      this.state ={ initialValue: 0 };
   }
 
   handleChange(e) {
@@ -22,12 +23,21 @@ class InputEther extends React.Component {
 
   componentDidUpdate ()
 	{
-	    if (this.didSwitchParentObject)
-	    {
+	    if (this.didSwitchParentObject) {
 	        this.didSwitchParentObject= false;
+	        this.setState({ initialValue: this.props.value });
 	        this.refs.input.value = this.props.value / 1000000000000000000 * 1000;
 	    }
-	}
+  }
+
+  componentDidMount() {
+      var self = this;
+      setTimeout(function() {
+          if (self.props.valueChange)
+              self.props.valueChange(self.state.initialValue);
+      }, 100)
+       
+   }
 
   render() {
     return (

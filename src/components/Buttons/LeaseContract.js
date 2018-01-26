@@ -31,6 +31,11 @@ class LeaseContract extends React.Component {
     }
   }
 
+  componentDidMount() {
+      if (this.props.contract)
+          this.setState({ rent: this.props.contract.rent });
+  }
+
   render() {
     if (!this.props.contract)
       return null;
