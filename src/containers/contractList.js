@@ -98,7 +98,8 @@ class ContractList extends Component {
   purchaseContract(data) {
       const self = this;
       var client = new ethConnect();
-
+      alert(data.buyer);
+      alert(data.price);
       const contract = this.epayContract(client);
 
       if (contract) {
@@ -112,14 +113,16 @@ class ContractList extends Component {
           promise
             .then(response => {
                 //self.refreshContracts(response);
-                self.props.addNotification({ style: 'success', title: 'Post Contingent Payment Contract Success', message: 'Contingent Payment Contract was successully posted. Waiting for the transaction to be mined.'})
+                self.props.addNotification({ style: 'success', title: 'Purchase Contract', message: 'Purchase transation was posted. Waiting for the transaction to be mined.'})
                 self.props.addTransaction(response);
             })
-            .catch(err => {console.log(err); self.props.addNotification({ style: 'danger', title: 'Post Contingent Payment Contract Error', message: `An error has occured. ${err}`}) });
+            .catch(err => {console.log(err); self.props.addNotification({ style: 'danger', title: 'Purchase Contract Error', message: `An error has occured. ${err}`}) });
       }
   }
 
   postContingentPaymentContract(data) {
+    alert(data.settler);
+    return;
     const self = this;
     var client = new ethConnect();
 
@@ -138,8 +141,13 @@ class ContractList extends Component {
           //self.refreshContracts(response);
           self.props.addNotification({ style: 'success', title: 'Post Contingent Payment Contract Success', message: 'Contingent Payment Contract was successully posted. Waiting for the transaction to be mined.'})
           self.props.addTransaction(response);
+
+          alert(contract.address);
+
         })
         .catch(err => {console.log(err); self.props.addNotification({ style: 'danger', title: 'Post Contingent Payment Contract Error', message: `An error has occured. ${err}`}) });
+
+
     }
   }
 
