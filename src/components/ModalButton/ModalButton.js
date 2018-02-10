@@ -13,7 +13,7 @@ class ModalButton extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showModel: false
+      showModel:false
     };
   }
 
