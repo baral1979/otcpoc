@@ -21,7 +21,7 @@ import Layout from '../../components/Layout';
 //   if (!data || !data.news) throw new Error('Failed to load the news feed.');
 //   return {
 //     chunks: ['home'],
-//     title: 'OTC Contracts',
+//     title: 'Conduit P2P',
 //     component: (
 //       <Layout>
 //         <Home news={data.news} />
@@ -31,16 +31,18 @@ import Layout from '../../components/Layout';
 // }
 
 function action() {
-
   // check environment
-  var acc = [];
+  const acc = [];
 
-  return {chunks: ['home'], title: 'OTC Contracts', component: (
-    <Layout>
-  <Home />
-</Layout>
-
-  )};
+  return {
+    chunks: ['home'],
+    title: 'Conduit P2P',
+    component: (
+      <Layout>
+        <Home />
+      </Layout>
+    ),
+  };
 }
 
 export default action;

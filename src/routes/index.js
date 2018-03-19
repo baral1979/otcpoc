@@ -63,7 +63,7 @@ const routes = {
     const route = await next();
 
     // Provide default values for title, description etc.
-    route.title = `${route.title || 'Untitled Page'} - OTC Contracts`;
+    route.title = `${route.title || 'Untitled Page'} - Conduit P2P`;
     route.description = route.description || '';
 
     return route;

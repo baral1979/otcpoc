@@ -1,0 +1,23 @@
+
+Here are the steps to get into the code:
+
+1. git clone https://github.com/baral1979/otcpoc.git
+2. cd otcpoc
+3. npm install (or yarn install)
+    I think yarn is better : (npm install -g yarn)
+4. to start the app, simply: yarn start
+5. to deploy the app: yarn deploy
+
+Settlement State 7
+- Add button for posting settlement result
+
+Post Contingent Payment Contract
+- Change the the field entries for the Settlement
+- Fixed by removing alert and return in the postContingentPaymentContract code in ContractList.js
+
+Post Settlement 
+- Need to add a PostSettlement because no buttons are showing up when a contract in Settlement Pending state is selected
+
+Settle Contingent Payment Contract
+- No buttons are showing up
+- Need to add SettleCPC 

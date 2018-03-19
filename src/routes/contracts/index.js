@@ -2,7 +2,7 @@ import React from 'react';
 import Layout from '../../components/Layout';
 import Contracts from './Contracts';
 
-const title = 'OTC Contracts';
+const title = 'Conduit P2P';
 
 function action() {
   return {
