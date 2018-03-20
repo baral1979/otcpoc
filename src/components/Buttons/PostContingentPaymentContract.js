@@ -65,7 +65,7 @@ class PostContingentPaymentContract extends React.Component {
               <option value={null} />
               {this.props.settlers.map(c => 
                (<option value={c.address}>{c.address}</option>)//c.description
-            )
+            )}
             </FormControl>
             <h5>Seller Address</h5>
             <Address address={this.props.contract.seller} showBalance={true} />
