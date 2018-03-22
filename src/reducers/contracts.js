@@ -17,8 +17,14 @@ const getStateText = function(state) {
     case '4':
       return 'Matched';
       break;
+    case '5':
+      return 'Contract for sale';
+      break;
     case '6':
       return 'Settlement pending';
+      break;
+    case '7':
+      return 'Settlement result posted';
       break;
     default:
       return state;

@@ -71,6 +71,18 @@ class ContractList extends Component {
     return null;
   }
 
+  descriptionGet(data) {
+    const self = this;
+    if (data.contractState == 3 || data.contractState == 4) {
+      for (let i = 0; i < this.props.contracts.length; i++) {
+        if (this.props.contracts[i].address == data.set) {
+          return this.props.contracts[i].description.toString();
+        }
+      }
+    }
+      return data.description.toString();
+  }
+
   cancelOffer(data) {
     const self = this;
     const client = new ethConnect();
@@ -439,8 +451,8 @@ class ContractList extends Component {
           <Card
             plain
             title={props.contract.address}
-            category={`${props.contract.stateText} - ${props.contract
-              .description}`}
+            category={`${props.contract.stateText} - ${props.contract.description.toString()
+            } : ${props.contract.units}`}
             ctTableFullWidth
             ctTableResponsive
             content={
@@ -452,6 +464,12 @@ class ContractList extends Component {
                   </tr>
                 </thead>
                 <tbody>
+                  <tr>
+                    <td>Units</td>
+                    <td>
+                      <Eth wei={props.contract.units} />
+                    </td>
+                  </tr>
                   <tr>
                     <td>Value</td>
                     <td>
@@ -481,6 +499,8 @@ class ContractList extends Component {
                     <td>
                       <Address address={props.contract.buyer} showBalance />
                     </td>
+                  </tr>
+                  <tr>
                   </tr>
                 </tbody>
               </Table>
@@ -572,7 +592,8 @@ class ContractList extends Component {
                           {contract.address}
                         </td>
                         <td>
-                          {contract.description.toString()}
+                          {this.descriptionGet(contract)//{contract.description.toString()}
+                          }
                         </td>
                         <td>
                           {contract.stateText}
