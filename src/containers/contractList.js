@@ -10,6 +10,12 @@ import ethConnect from '../helpers/eth';
 import OTC from '../helpers/otc';
 import CreateContract from '../components/Buttons/CreateContract';
 import LeaseAny from '../components/Buttons/LeaseAny';
+import ClaimBalance from '../components/Buttons/ClaimBalance';
+import TradeContract from '../components/Buttons/TradeContract';
+import ChangeTradeContract from '../components/Buttons/ChangeTradeContract';
+import ConfirmTradeContract from '../components/Buttons/ConfirmTradeContract';
+import CancelTradeContract from '../components/Buttons/CancelTradeContract';
+import SetRent from '../components/Buttons/SetRent';
 import LeaseContract from '../components/Buttons/LeaseContract';
 import AcceptOffer from '../components/Buttons/AcceptOffer';
 import CancelOffer from '../components/Buttons/CancelOffer';
@@ -348,6 +354,218 @@ class ContractList extends Component {
     }
   }
 
+  claimBalance(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.claimBalance({
+        from: data.owner,
+        gasLimit: 90000,
+        gasPrice: 200000000000,
+      });
+
+      promise
+        .then(response => {
+          // self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Collected Rent Reset Contract to Initial',
+            message:
+              'Contract was successully reset and rent collected. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err => {
+          console.log(err);
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Contract Error',
+            message: `An error has occured. ${err}`,
+          });
+        });
+    }
+  }
+  tradeContract(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.tradeContract(
+        parseInt(data.price) * 1000000000000000,
+        {  from: data.address,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Contract offered for sale',
+            message:
+              'Contract was offered for sale changed. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Contract offered for sale',
+            message: `Change failed. ${err}`,
+          }),
+        );
+    }
+  }
+  changeTradeContract(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.changeContractTrade(
+        parseInt(data.price) * 1000000000000000,
+        {  from: data.address,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Change offer price',
+            message:
+              'The contract offer price was changed. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Change offer price',
+            message: `Change failed. ${err}`,
+          }),
+        );
+    }
+  }
+
+  cancelTradeContract(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.cancelContractTrade(
+        {  from: data.address,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Cancel offer',
+            message:
+              'Contract offer canceled. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Cancel offer',
+            message: `Change failed. ${err}`,
+          }),
+        );
+    }
+  }
+
+  confirmTradeContract(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.confirmContractTrade(
+        {  from: data.buyer,
+          value: data.price,
+          gas: 2000000,
+          gasPrice: 20000000000
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Purchase Contract',
+            message:
+              'Purchase order is posted. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Purchase Contract',
+            message: `Change failed. ${err}`,
+          }),
+        );
+    }
+  }
+
+  setRent(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.setRent(
+        parseInt(data.rent) * 1000000000000000,
+        {  from: data.address,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'New rent',
+            message:
+              'Rent was changed. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Rent changed',
+            message: `Change failed. ${err}`,
+          }),
+        );
+    }
+  }
+
   leaseContract(data) {
     alert(data.rent);
     const self = this;
@@ -446,7 +664,169 @@ class ContractList extends Component {
     };
 
     const SelectedContract = function(props) {
-      if (props.contract) {
+      if (props.contract) {//Insert conditions re state 
+        if (props.contract.stateText == 'Initial state') {
+        return (
+          <Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText}`}
+            ctTableFullWidth
+            ctTableResponsive
+            content={
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Contract Balance</td>
+                    <td>
+                      <Address address={props.contract.address} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Rent</td>
+                    <td>
+                      <Eth wei={props.contract.rent} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Owner</td>
+                    <td>
+                      <Address address={props.contract.owner} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                  </tr>
+                </tbody>
+              </Table>
+            }
+          />
+        );
+      }
+      else if (props.contract.stateText == 'Leased') {
+        return (
+          <Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText}`}
+            ctTableFullWidth
+            ctTableResponsive
+            content={
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Contract Balance</td>
+                    <td>
+                      <Address address={props.contract.address} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Leaser</td>
+                    <td>
+                      <Address address={props.contract.seller} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                  </tr>
+                </tbody>
+              </Table>
+            }
+          />
+        );
+      }
+      else if (props.contract.stateText == 'Contract for sale') {
+        return (
+          <Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText}`}
+            ctTableFullWidth
+            ctTableResponsive
+            content={
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Contract Balance</td>
+                    <td>
+                      <Address address={props.contract.address} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Contract Price</td>
+                    <td>
+                      <Eth wei={props.contract.valueT} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Owner</td>
+                    <td>
+                      <Address address={props.contract.owner} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                  </tr>
+                </tbody>
+              </Table>
+            }
+          />
+        );
+      }
+      else if (props.contract.stateText == 'Settlement pending') {
+        return (
+          <Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText} - ${props.contract.description.toString()
+            } `}
+            ctTableFullWidth
+            ctTableResponsive
+            content={
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Contract Balance</td>
+                    <td>
+                      <Address address={props.contract.address} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Reporter</td>
+                    <td>
+                      <Address address={props.contract.seller} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                  </tr>
+                </tbody>
+              </Table>
+            }
+          />
+        );
+      }
+      else {
         return (
           <Card
             plain
@@ -506,9 +886,9 @@ class ContractList extends Component {
               </Table>
             }
           />
-        );
+        );}
       }
-
+      
       return null;
     };
 
@@ -608,6 +988,42 @@ class ContractList extends Component {
 
           <Col md={4}>
             <SelectedContract contract={this.props.selectedContract} />
+            <ClaimBalance
+              contract={this.props.selectedContract}
+              success={this.claimBalance.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}//Should be disabled when user is not owner
+              address={this.props.user.address}
+            />
+            <TradeContract
+              contract={this.props.selectedContract}
+              success={this.tradeContract.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}//Should be disabled when user is not owner
+              address={this.props.user.address}
+            />
+            <ChangeTradeContract
+              contract={this.props.selectedContract}
+              success={this.changeTradeContract.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}//Should be disabled when user is not owner
+              address={this.props.user.address}
+            />
+            <CancelTradeContract
+              contract={this.props.selectedContract}
+              success={this.cancelTradeContract.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}//Should be disabled when user is not owner
+              address={this.props.user.address}
+            />
+            <ConfirmTradeContract
+              contract={this.props.selectedContract}
+              success={this.confirmTradeContract.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}//Should be disabled when user is not owner
+              address={this.props.user.address}
+            />
+            <SetRent
+              contract={this.props.selectedContract}
+              success={this.setRent.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}//Should be disabled when user is not owner
+              address={this.props.user.address}
+            />
             <LeaseContract
               contract={this.props.selectedContract}
               success={this.leaseContract.bind(this)}
@@ -623,10 +1039,7 @@ class ContractList extends Component {
             <CancelOffer
               contract={this.props.selectedContract}
               success={this.cancelOffer.bind(this)}
-              disabled={
-                this.props.user.address !==
-                (this.props.contract ? this.props.contract.seller : 'none')
-              }
+              disabled={this.props.user.address.indexOf('0x') !== 0}//Should be disabled when user is not seller
               address={this.props.user.address}
             />
             <DefineSettlement
