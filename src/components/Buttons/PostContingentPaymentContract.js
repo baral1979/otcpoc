@@ -69,9 +69,9 @@ class PostContingentPaymentContract extends React.Component {
             </FormControl>
             <h5>Seller Address</h5>
             <Address address={this.props.contract.seller} showBalance={true} />
-            <h5>Enter Contract (in Finney)</h5>
+            <h5>Enter Asking Price (in Finney)</h5>
             <InputEther valueChange={this.setEnter.bind(this)} />
-            <h5>Enter Bid (in Finney)</h5>
+            <h5>Enter Offer (in Finney)</h5>
             <InputEther valueChange={this.setBid.bind(this)} />
           </div>
         }

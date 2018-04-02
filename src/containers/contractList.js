@@ -25,6 +25,10 @@ import PostResult1 from '../components/Buttons/PostResult1';
 import Settle from '../components/Buttons/Settle';
 import CollectFee from '../components/Buttons/CollectFee';
 import Trx from '../components/Trx';
+import ChangeBuyerPositionPrice from '../components/Buttons/ChangeBuyerPositionPrice';
+import ChangeSellerPositionPrice from '../components/Buttons/ChangeSellerPositionPrice';
+import PurchaseBuyerPosition from '../components/Buttons/PurchaseBuyerPosition';
+import PurchaseSellerPosition from '../components/Buttons/PurchaseSellerPosition';
 
 class ContractList extends Component {
   refreshContracts(selectAddress) {
@@ -76,6 +80,8 @@ class ContractList extends Component {
 
     return null;
   }
+
+
 
   descriptionGet(data) {
     const self = this;
@@ -502,7 +508,7 @@ class ContractList extends Component {
 
     if (contract) {
       const promise = contract.confirmContractTrade(
-        {  from: data.buyer,
+        { from: data.buyer,
           value: data.price,
           gas: 2000000,
           gasPrice: 20000000000
@@ -529,7 +535,146 @@ class ContractList extends Component {
         );
     }
   }
+  changeBuyerPositionPrice(data) {
+    const self = this;
+    const client = new ethConnect();
 
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.tradeBuyer(
+        parseInt(data.price) * 1000000000000000,
+        {  from: data.address,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Change offer price',
+            message:
+              'The contract offer price was changed. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Change offer price',
+            message: `Change failed. ${err}`,
+          }),
+        );
+    }
+  }
+  purchaseBuyerPosition(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.confirmBuyerTrade(
+        { from: data.buyer,
+          value: data.price,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Purchase Buyer Position',
+            message:
+              'The purchase order was placed. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Purchase Buyer Position',
+            message: `Purchase failed. ${err}`,
+          }),
+        );
+    }
+  }
+  changeSellerPositionPrice(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.tradeSeller(
+        parseInt(data.price) * 1000000000000000,
+        {  from: data.address,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Change offer price',
+            message:
+              'The contract offer price was changed. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Change offer price',
+            message: `Change failed. ${err}`,
+          }),
+        );
+    }
+  }
+  purchaseSellerPosition(data) {
+    const self = this;
+    const client = new ethConnect();
+
+    const contract = this.epayContract(client);
+
+    if (contract) {
+      const promise = contract.confirmSellerTrade(
+        { from: data.seller,
+          value: data.price,
+          gas: 2000000,
+          gasPrice: 20000000000,
+        }
+      );
+
+      promise
+        .then(response => {
+          self.refreshContracts(response);
+          self.props.addNotification({
+            style: 'success',
+            title: 'Purchase Seller Position',
+            message:
+              'The purchase order was placed. Waiting for the transaction to be mined.',
+          });
+          self.props.addTransaction(response);
+        })
+        .catch(err =>
+          self.props.addNotification({
+            style: 'danger',
+            title: 'Purchase Seller Position',
+            message: `Purchase failed. ${err}`,
+          }),
+        );
+    }
+  }
   setRent(data) {
     const self = this;
     const client = new ethConnect();
@@ -745,6 +890,118 @@ class ContractList extends Component {
           />
         );
       }
+      else if (props.contract.stateText == 'Offered') {
+        return (
+          <Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText}`}
+            ctTableFullWidth
+            ctTableResponsive
+            content={
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Settlement</td>
+                    <td>
+                      <Address address={props.contract.set} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Seller</td>
+                    <td>
+                      <Address address={props.contract.seller} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Asking</td>
+                    <td>
+                      <Eth wei={props.contract.units} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Offer</td>
+                    <td>
+                      <Eth wei={props.contract.value} />
+                    </td>
+                  </tr>
+                  <tr>
+                  </tr>
+                </tbody>
+              </Table>
+            }
+          />
+        );
+      }
+      else if (props.contract.stateText == 'Matched') {
+        //ContractValue should be moved to a function
+        const contractEthValue = (props.contract.value/1000000000000000000) + (props.contract.units/1000000000000000000);
+        return (
+          <Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText}`}
+            ctTableFullWidth
+            ctTableResponsive
+            content={
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Settlement</td>
+                    <td>
+                      <Address address={props.contract.set} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Buyer</td>
+                    <td>
+                      <Address address={props.contract.buyer} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Seller</td>
+                    <td>
+                      <Address address={props.contract.seller} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Contract Value</td>
+                    <td>
+                      <Eth wei={contractEthValue*1000000000000000000}/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Buyer Position Price</td>
+                    <td>
+                      <Eth wei={props.contract.unitsT}/>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Seller Position Price</td>
+                    <td>
+                      <Eth wei={props.contract.valueT}/>
+                    </td>
+                  </tr>
+                  <tr>
+                  </tr>
+                </tbody>
+              </Table>
+            }
+          />
+        );
+      }
       else if (props.contract.stateText == 'Contract for sale') {
         return (
           <Card
@@ -810,6 +1067,62 @@ class ContractList extends Component {
                     <td>Contract Balance</td>
                     <td>
                       <Address address={props.contract.address} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Settlement Fee</td>
+                    <td>
+                      <Eth wei={props.contract.value} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Reporter</td>
+                    <td>
+                      <Address address={props.contract.seller} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                  </tr>
+                </tbody>
+              </Table>
+            }
+          />
+        );
+      }
+      else if (props.contract.stateText == 'Settlement result posted') {
+        return (
+          <Card
+            plain
+            title={props.contract.address}
+            category={`${props.contract.stateText} - ${props.contract.description.toString()
+            } : ${props.contract.units}`}
+            ctTableFullWidth
+            ctTableResponsive
+            content={
+              <Table hover>
+                <thead>
+                  <tr>
+                    <th>Variable</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Contract Balance</td>
+                    <td>
+                      <Address address={props.contract.address} showBalance />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Settlement Fee</td>
+                    <td>
+                      <Eth wei={props.contract.value} />
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>Accumulated Settlement Fees</td>
+                    <td>
+                      <Eth wei={props.contract.valueT} />
                     </td>
                   </tr>
                   <tr>
@@ -1033,6 +1346,30 @@ class ContractList extends Component {
             <AcceptOffer
               contract={this.props.selectedContract}
               success={this.purchaseContract.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}
+              address={this.props.user.address}
+            />
+            <ChangeBuyerPositionPrice
+              contract={this.props.selectedContract}
+              success={this.changeBuyerPositionPrice.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}
+              address={this.props.user.address}
+            />
+            <ChangeSellerPositionPrice
+              contract={this.props.selectedContract}
+              success={this.changeSellerPositionPrice.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}
+              address={this.props.user.address}
+            />
+            <PurchaseBuyerPosition
+              contract={this.props.selectedContract}
+              success={this.purchaseBuyerPosition.bind(this)}
+              disabled={this.props.user.address.indexOf('0x') !== 0}
+              address={this.props.user.address}
+            />
+            <PurchaseSellerPosition
+              contract={this.props.selectedContract}
+              success={this.purchaseSellerPosition.bind(this)}
               disabled={this.props.user.address.indexOf('0x') !== 0}
               address={this.props.user.address}
             />
